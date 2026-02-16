@@ -3,19 +3,19 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import LoginPage from "@/pages/login";
+import DashboardPage from "@/pages/dashboard";
+import PreviewPage from "@/pages/preview";
+import PublicWeddingPage from "@/pages/public-wedding";
 import NotFound from "@/pages/not-found";
-
-// Pages
-import Login from "@/pages/Login";
-import Dashboard from "@/pages/Dashboard";
-import Preview from "@/pages/Preview";
 
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Login} />
-      <Route path="/dashboard/:id" component={Dashboard} />
-      <Route path="/preview/:id" component={Preview} />
+      <Route path="/" component={LoginPage} />
+      <Route path="/dashboard" component={DashboardPage} />
+      <Route path="/preview" component={PreviewPage} />
+      <Route path="/wedding/:id" component={PublicWeddingPage} />
       <Route component={NotFound} />
     </Switch>
   );

@@ -71,6 +71,7 @@ export async function registerRoutes(
         - schemaMarkup: Stringified JSON-LD WeddingEvent.
         - agendaIntro: Short line introducing the schedule.
         - detailsIntro: Short line introducing dress code and logistics.
+        - closingMessage: A warm, emotional closing thank-you message.
       `;
 
       const response = await openai.chat.completions.create({

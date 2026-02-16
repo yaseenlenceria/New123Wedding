@@ -1,0 +1,308 @@
+You are designing a premium web application that allows couples to create animated, interactive wedding invitation websites in minutes.
+
+This platform must feel more luxurious, easier, and more modern than Canva wedding templates.
+
+The goal:
+Create an ultra-simple, emotional, beautiful editing experience where non-technical couples can customize elegant animated wedding invitations with zero stress.
+
+This is not a design tool.
+This is a guided wedding creation experience.
+
+🎯 Target Audience
+
+• Brides and grooms aged 23–38
+• Not tech savvy
+• Want something elegant, romantic, and modern
+• Currently using Canva because it's simple
+• Want RSVP tracking, music, countdown, and easy sharing
+• Care about aesthetics
+• Want everything to work on mobile perfectly
+
+✨ PLATFORM VISION
+
+The app should feel like:
+
+Luxury wedding brand
+Pinterest aesthetic
+Apple-level simplicity
+Etsy trending elegance
+Emotional and romantic
+
+Soft animations
+Smooth transitions
+Clean UI
+No clutter
+
+The editing should feel magical, not technical.
+
+🧩 EVERY TEMPLATE MUST INCLUDE THESE CORE SECTIONS
+
+Each template must automatically include:
+
+Hero Section
+
+Couple names
+
+Wedding date
+
+Elegant typography
+
+Background image or video
+
+Soft fade animation
+
+Optional music player
+
+Countdown Section
+
+Live real-time countdown
+
+Animated number transitions
+
+Editable heading text
+
+Our Story / Welcome Section
+
+Short romantic paragraph
+
+Editable text
+
+Optional photo upload
+
+The Day Timeline
+
+Ceremony
+
+Cocktail hour
+
+Dinner
+
+Party
+
+Icons
+
+Editable times
+
+Add or remove events
+
+Venue Section
+
+Venue name
+
+Address
+
+Embedded map
+
+Open in maps button
+
+Details Section
+
+Dress code
+
+Accommodation
+
+Transportation
+
+Registry link
+
+Gallery Section
+
+Upload engagement photos
+
+Auto layout
+
+Lightbox view
+
+RSVP Section
+
+Built-in RSVP form
+
+Guest count selection
+
+Meal selection
+
+Plus one toggle
+
+Custom questions
+
+Confirmation message
+
+Admin dashboard for responses
+
+Music Player
+
+Upload music or paste link
+
+Play button
+
+Optional autoplay
+
+Share Section
+
+Copy link button
+
+QR code auto generate
+
+Share via WhatsApp
+
+Share via email
+
+🪄 EDITING EXPERIENCE MUST BE:
+
+Not complicated.
+No design skills needed.
+
+Editing flow:
+
+Step 1 – Choose template
+Step 2 – Answer simple questions
+Step 3 – Preview instantly
+Step 4 – Publish
+
+💡 AI CUSTOMIZATION FLOW
+
+When user selects template:
+
+Ask simple questions like:
+
+• Couple names
+• Wedding date
+• Venue name
+• Wedding colors
+• Love story summary
+• Upload photos
+• Song link
+• RSVP questions
+
+Then automatically:
+
+• Fill all sections
+• Adjust layout spacing
+• Match color theme
+• Choose matching fonts
+• Optimize mobile view
+
+Make it feel like magic.
+
+🎨 TEMPLATE STYLE OPTIONS
+
+Create categories:
+
+• Sage Green Botanical
+• Cream & Gold Luxury
+• Minimal White Modern
+• Black & Gold Glam
+• Dusty Blue Elegant
+• Romantic Floral Pink
+• Old Money Classic
+• Destination Beach
+• Rustic Garden
+• Classic Cathedral
+
+Each template must have:
+
+Unique typography pairing
+Matching color palette
+Subtle animations
+Elegant button styles
+
+📱 MOBILE FIRST
+
+Everything must look perfect on:
+
+iPhone
+Android
+Tablet
+Desktop
+
+Mobile preview must be default.
+
+🧠 ADMIN DASHBOARD
+
+User must see:
+
+• Total guests confirmed
+• Total declined
+• Meal selections
+• Guest list export
+• Response charts
+• Download CSV
+
+Dashboard must be simple and beautiful.
+
+🌍 EXTRA FEATURES TO STAND OUT
+
+• Multi language toggle
+• Dark mode
+• Animated page transitions
+• Smooth scroll effects
+• Parallax images
+• Custom domain option
+• Guest message wall
+• Private access code option
+
+🎀 EXPERIENCE FEEL
+
+It should feel like:
+
+A luxury wedding magazine
+Mixed with Instagram aesthetic
+Mixed with Apple product smoothness
+
+Calm colors
+Soft shadows
+Elegant serif + handwritten font pairing
+
+💎 IMPORTANT
+
+Do not overcomplicate UI.
+
+Keep it clean.
+Keep it intuitive.
+Make it beautiful.
+Make it emotional.
+
+The bride must say:
+"This is so easy."
+
+🧩 STRUCTURE OF THE WEB APP
+
+Home page:
+• Hero
+• Template gallery
+• Live demo preview
+• Feature highlights
+• Pricing
+• Testimonials
+• Call to action
+
+Template gallery:
+• Card previews
+• Hover animation
+• Quick preview modal
+• Filter by style
+
+Editor:
+• Left side: Question flow
+• Right side: Live preview
+• Real-time updates
+• Auto save
+
+🚀 GIVE CREATIVE FREEDOM
+
+You are allowed to:
+
+Add micro animations
+Improve typography
+Suggest better layout structure
+Enhance emotional impact
+Refine UX for simplicity
+Polish aesthetics
+
+The final result must feel:
+
+Modern
+Premium
+Effortless
+Elegant
+Magical
