@@ -1,0 +1,132 @@
+Create a Beautiful, Easy Wedding Website Builder
+
+Build a soft, romantic, beginner-friendly wedding website builder web app designed for modern couples who want something elegant without learning design.
+
+This product must feel:
+
+Calm
+Luxury
+Emotional
+Effortless
+Premium but simple
+
+Think about a bride planning at midnight on her phone.
+She wants beauty, not complexity.
+
+Do not create a technical dashboard.
+Create a guided experience.
+
+────────────────────────
+
+CORE EXPERIENCE
+
+Instead of overwhelming editing tools, create a step-by-step flow:
+
+Choose Style
+Show 5 elegant animated previews.
+Let them scroll slightly.
+Let it feel magical.
+
+Tell Us About You
+Soft friendly form.
+Warm tone.
+Not corporate.
+
+Example tone:
+“Let’s start with your love story…”
+
+Upload Your Photos
+Drag and drop.
+Instant preview.
+
+Set Your Wedding Date
+Auto countdown appears live.
+
+Add Your Schedule
+Ceremony
+Dinner
+Party
+
+RSVP Setup
+Simple toggle:
+Enable RSVP?
+Yes / No
+
+If yes:
+Auto generate beautiful form.
+
+────────────────────────
+
+DESIGN STYLE
+
+• Mobile-first
+• Elegant serif fonts
+• Script for names
+• Soft ivory backgrounds
+• Champagne gold accents
+• Gentle animations
+• Smooth scrolling
+• Romantic micro interactions
+
+Do not use loud colors.
+Do not make it look like a SaaS dashboard.
+
+Make it feel like a luxury wedding planning space.
+
+────────────────────────
+
+AI FREEDOM SECTION
+
+You are allowed to:
+
+Improve layout
+Enhance animations
+Suggest better emotional copy
+Refine visual hierarchy
+Improve user flow
+Simplify where possible
+
+Prioritize:
+
+Ease
+Beauty
+Emotion
+Speed
+
+If something feels complicated, simplify it.
+
+If something feels cheap, elevate it.
+
+If something feels corporate, soften it.
+
+────────────────────────
+
+GOAL
+
+When a bride finishes setup, she should feel:
+
+“Oh my God… this looks expensive.”
+
+And she did it in minutes.
+
+────────────────────────
+
+Add these enhancements:
+
+• Subtle background music option
+• Elegant RSVP success animation
+• QR code auto generation
+• Share via WhatsApp button
+• Elegant publish screen
+• Romantic confirmation message
+
+────────────────────────
+
+FINAL RULE
+
+This is not a builder for designers.
+This is for normal people.
+
+Make everything guided.
+Remove complexity.
+Add emotional warmth.

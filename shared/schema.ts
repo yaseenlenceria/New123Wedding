@@ -27,6 +27,7 @@ export const orders = pgTable("orders", {
     agenda?: { time: string; event: string }[];
     accommodation?: string;
     transportation?: string;
+    galleryImages?: string[];
   }>(),
   generatedContent: jsonb("generated_content").$type<{
     welcomeMessage: string;
@@ -38,6 +39,7 @@ export const orders = pgTable("orders", {
     schemaMarkup: string;
     agendaIntro?: string;
     detailsIntro?: string;
+    closingMessage?: string;
   }>(),
   domain: varchar("domain"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -68,8 +70,11 @@ export const weddingDetailsSchema = z.object({
   agenda: z.array(z.object({ time: z.string(), event: z.string() })).optional(),
   accommodation: z.string().optional(),
   transportation: z.string().optional(),
+  galleryImages: z.array(z.string()).optional(),
 });
 
 export type Order = typeof orders.$inferSelect;
 export type InsertOrder = z.infer<typeof insertOrderSchema>;
 export type WeddingDetails = z.infer<typeof weddingDetailsSchema>;
+
+export * from "./models/chat";
