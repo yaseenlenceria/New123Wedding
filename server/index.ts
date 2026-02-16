@@ -6,6 +6,9 @@ import { createServer } from "http";
 const app = express();
 const httpServer = createServer(app);
 
+// Export app for Vercel serverless deployment
+export default app;
+
 declare module "http" {
   interface IncomingMessage {
     rawBody: unknown;
