@@ -7,6 +7,11 @@ import {
   Ornament, RsvpSection, ClosingSection, DetailCard, formatWeddingDate, getEventIcon,
   type TemplateProps,
 } from "./shared";
+import { BlurRevealImage, FloatingLights, FloatingDecor } from "./shared";
+import mossAgateRingImg from "@assets/0f63d8b56ab62900e7e7d1737446cf224840ef13_1771243555623.webp";
+import dustyBouquetImg from "@assets/182a00f228298a9dcb6d438e87f8bc4320b19902_1771243555624.jpg";
+import greeneryFrameImg from "@assets/0873873003f17f8893ffa029c4e8fc8b2f19527f_1771243555627.png";
+import whiteBouquetImg from "@assets/8808cb9958bbe5ba81f82905575b3c045dfdc801_1771243555625.jpg";
 
 import royalHeroImg from "@/assets/images/royal-hero.jpg";
 import royalCakeImg from "@/assets/images/royal-cake.jpg";
@@ -48,6 +53,9 @@ export default function TemplateBotanical({ order, theme }: TemplateProps) {
           <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a]/80 via-[#0a0a0a]/60 to-[#0a0a0a]" />
         </motion.div>
         <Particles color={theme.particleColor} count={18} />
+        <FloatingLights color="rgba(212,175,55,0.08)" count={8} />
+        <FloatingDecor src={greeneryFrameImg} className="w-32 h-32 md:w-48 md:h-48 -top-4 -left-4 opacity-15 z-0" delay={1.5} amplitude={8} />
+        <FloatingDecor src={greeneryFrameImg} className="w-28 h-28 md:w-40 md:h-40 -bottom-4 -right-4 opacity-10 z-0 rotate-180" delay={3} amplitude={10} />
 
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
@@ -118,6 +126,7 @@ export default function TemplateBotanical({ order, theme }: TemplateProps) {
             transition={{ repeat: Infinity, duration: 8, ease: "easeInOut" }}
             className="w-[500px] h-[500px] rounded-full bg-gradient-to-r from-[#d4af37]/20 to-transparent blur-3xl"
           />
+          <FloatingLights color="rgba(212,175,55,0.06)" count={5} />
         </div>
         <div className="max-w-lg mx-auto text-center relative z-10">
           <FadeSection>
@@ -141,6 +150,7 @@ export default function TemplateBotanical({ order, theme }: TemplateProps) {
       {content.ourStory && (
         <section className={`py-24 md:py-32 px-6 ${theme.bgSecondary} relative`} data-testid="section-story">
           <Particles color={theme.particleColor} count={10} />
+          <FloatingLights color="rgba(212,175,55,0.04)" count={4} />
           <div className="max-w-5xl mx-auto relative z-10">
             <SectionHeading title="Our Story" subtitle="A Royal Love" theme={theme} />
             <FadeSection delay={0.15}>
@@ -159,7 +169,7 @@ export default function TemplateBotanical({ order, theme }: TemplateProps) {
                 </div>
                 <div className="order-1 md:order-2 relative">
                   <div className="rounded-2xl overflow-hidden aspect-[3/4] border border-[#d4af37]/10">
-                    <img src={royalCakeImg} alt="Celebration" className="w-full h-full object-cover" data-testid="img-celebration" />
+                    <BlurRevealImage src={dustyBouquetImg} alt="Celebration" className="w-full h-full" data-testid="img-celebration" />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a]/30 to-transparent" />
                   </div>
                 </div>
@@ -170,7 +180,7 @@ export default function TemplateBotanical({ order, theme }: TemplateProps) {
       )}
 
       <section className="relative h-[40vh] md:h-[50vh] overflow-hidden">
-        <img src={ringsImg} alt="Wedding rings" className="w-full h-full object-cover" data-testid="img-rings" />
+        <BlurRevealImage src={mossAgateRingImg} alt="Wedding rings" className="w-full h-full" data-testid="img-rings" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a]/80 via-[#0a0a0a]/40 to-[#0a0a0a]/80" />
         <div className="absolute inset-0 flex items-center justify-center">
           <FadeSection className="text-center px-6">
@@ -188,7 +198,7 @@ export default function TemplateBotanical({ order, theme }: TemplateProps) {
           <FadeSection delay={0.15}>
             <div className="border border-[#d4af37]/10 rounded-2xl overflow-hidden">
               <div className="relative h-72 md:h-96">
-                <img src={royalHeroImg} alt={details.venue} className="w-full h-full object-cover" data-testid="img-venue" />
+                <BlurRevealImage src={royalHeroImg} alt={details.venue} className="w-full h-full" data-testid="img-venue" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent" />
                 {details.googleMapsUrl && (
                   <a
@@ -272,10 +282,11 @@ export default function TemplateBotanical({ order, theme }: TemplateProps) {
 
       <section className={`py-24 md:py-32 px-6 ${theme.bgSecondary} relative`} data-testid="section-gallery">
         <Particles color={theme.particleColor} count={8} />
+        <FloatingLights color="rgba(212,175,55,0.04)" count={4} />
         <div className="max-w-5xl mx-auto relative z-10">
           <SectionHeading title="Gallery" subtitle="Royal Moments" theme={theme} />
           <StaggerChildren className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {[royalHeroImg, royalCakeImg, ringsImg, flowersImg].map((img, i) => (
+            {[royalHeroImg, dustyBouquetImg, mossAgateRingImg, whiteBouquetImg, flowersImg, royalCakeImg].map((img, i) => (
               <motion.div
                 key={i}
                 variants={staggerItem}

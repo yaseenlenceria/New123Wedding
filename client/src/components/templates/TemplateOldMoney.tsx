@@ -5,13 +5,16 @@ import {
   EnvelopeOpening, FloatingRing, Particles, Countdown, MusicButton,
   FadeSection, StaggerChildren, staggerItem, LetterByLetter, SectionHeading,
   Ornament, RsvpSection, ClosingSection, DetailCard, formatWeddingDate, getEventIcon,
-  type TemplateProps,
+  type TemplateProps, BlurRevealImage, FloatingLights, FloatingDecor,
 } from "./shared";
 
 import oldMoneyHeroImg from "@/assets/images/oldmoney-hero.jpg";
 import oldMoneyTableImg from "@/assets/images/oldmoney-table.jpg";
 import ringsImg from "@/assets/images/rings.jpg";
 import flowersImg from "@/assets/images/flowers.jpg";
+import rosesBackgroundImg from "@assets/705bc7f41429871f2378cf8a260146ed7b12bf7c_1771243555627.jpg";
+import mossAgateRingImg from "@assets/0f63d8b56ab62900e7e7d1737446cf224840ef13_1771243555623.webp";
+import bridesmaidsImg from "@assets/40220817f765def8d09492c4a0d562b82296009c_1771243555627.jpg";
 
 export default function TemplateOldMoney({ order, theme }: TemplateProps) {
   const [envelopeOpen, setEnvelopeOpen] = useState(false);
@@ -50,6 +53,7 @@ export default function TemplateOldMoney({ order, theme }: TemplateProps) {
           <div className="absolute bottom-6 right-6 md:bottom-14 md:right-14 w-12 h-12 md:w-20 md:h-20 border-b border-r border-[#c9a94e]/30" />
         </div>
         <Particles color={theme.particleColor} count={12} />
+        <FloatingLights color="rgba(201,169,78,0.08)" count={6} />
 
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
@@ -107,8 +111,9 @@ export default function TemplateOldMoney({ order, theme }: TemplateProps) {
       </motion.section>
 
       <section className="relative h-[50vh] md:h-[60vh] overflow-hidden" data-testid="section-countdown">
-        <img src={oldMoneyHeroImg} alt="Grand venue" className="w-full h-full object-cover" data-testid="img-hero" />
+        <BlurRevealImage src={oldMoneyHeroImg} alt="Grand venue" className="w-full h-full" data-testid="img-hero" />
         <div className="absolute inset-0 bg-gradient-to-b from-[#070f20]/60 via-transparent to-[#070f20]/80" />
+        <FloatingLights color="rgba(201,169,78,0.1)" count={5} />
         <div className="absolute inset-0 flex items-center justify-center">
           <FadeSection className="text-center px-6">
             <p className={`${theme.scriptFont} text-[#c9a94e]/70 text-sm tracking-[0.4em] uppercase mb-3`}>Counting Down</p>
@@ -125,13 +130,14 @@ export default function TemplateOldMoney({ order, theme }: TemplateProps) {
       {content.ourStory && (
         <section className={`py-24 md:py-32 px-6 ${theme.bg} relative`} data-testid="section-story">
           <Particles color={theme.particleColor} count={8} />
+          <FloatingLights color="rgba(201,169,78,0.05)" count={4} />
           <div className="max-w-4xl mx-auto relative z-10">
             <SectionHeading title="Our Story" subtitle="A Love Letter" theme={theme} />
             <FadeSection delay={0.15}>
               <div className="grid md:grid-cols-12 gap-8 items-start">
                 <div className="md:col-span-5">
                   <div className="relative rounded-2xl overflow-hidden aspect-[3/4] border border-[#c9a94e]/10">
-                    <img src={ringsImg} alt="Wedding rings" className="w-full h-full object-cover" data-testid="img-rings" />
+                    <BlurRevealImage src={mossAgateRingImg} alt="Wedding rings" className="w-full h-full" data-testid="img-rings" />
                   </div>
                 </div>
                 <div className="md:col-span-7">
@@ -158,7 +164,7 @@ export default function TemplateOldMoney({ order, theme }: TemplateProps) {
           <FadeSection delay={0.15}>
             <div className="rounded-2xl overflow-hidden border border-[#c9a94e]/10">
               <div className="relative h-64 md:h-80">
-                <img src={oldMoneyTableImg} alt={details.venue} className="w-full h-full object-cover" data-testid="img-venue" />
+                <BlurRevealImage src={oldMoneyTableImg} alt={details.venue} className="w-full h-full" data-testid="img-venue" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0e1830] to-transparent" />
                 {details.googleMapsUrl && (
                   <a
@@ -238,17 +244,18 @@ export default function TemplateOldMoney({ order, theme }: TemplateProps) {
 
       <section className={`py-24 md:py-32 px-6 ${theme.bg} relative`} data-testid="section-gallery">
         <Particles color={theme.particleColor} count={6} />
+        <FloatingLights color="rgba(201,169,78,0.04)" count={3} />
         <div className="max-w-4xl mx-auto relative z-10">
           <SectionHeading title="Gallery" subtitle="Captured Moments" theme={theme} />
           <StaggerChildren className="grid grid-cols-3 gap-3 md:gap-4">
-            {[oldMoneyHeroImg, ringsImg, oldMoneyTableImg, flowersImg].map((img, i) => (
+            {[oldMoneyHeroImg, mossAgateRingImg, rosesBackgroundImg, oldMoneyTableImg, bridesmaidsImg, flowersImg].map((img, i) => (
               <motion.div
                 key={i}
                 variants={staggerItem}
                 className={`${i === 0 ? "col-span-2 row-span-2 aspect-[4/3]" : "aspect-square"} rounded-2xl overflow-hidden relative group border border-[#c9a94e]/8`}
                 data-testid={`gallery-item-${i}`}
               >
-                <img src={img} alt={`Gallery ${i + 1}`} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                <img src={img} alt={`Gallery ${i + 1}`} className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105" />
                 <div className="absolute inset-0 bg-[#070f20]/20 group-hover:bg-[#070f20]/5 transition-colors duration-500" />
               </motion.div>
             ))}

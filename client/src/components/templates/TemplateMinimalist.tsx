@@ -7,11 +7,14 @@ import {
   Ornament, RsvpSection, ClosingSection, DetailCard, formatWeddingDate, getEventIcon,
   type TemplateProps,
 } from "./shared";
+import { BlurRevealImage, FloatingLights } from "./shared";
 
 import minimalHeroImg from "@/assets/images/minimal-hero.jpg";
 import ringsImg from "@/assets/images/rings.jpg";
 import flowersImg from "@/assets/images/flowers.jpg";
 import venueImg from "@/assets/images/venue.jpg";
+import whiteBouquetImg from "@assets/8808cb9958bbe5ba81f82905575b3c045dfdc801_1771243555625.jpg";
+import eucalyptusImg from "@assets/5051562e495ce42b8dbad1fbb98ab124932722f5_1771243555625.jpg";
 
 export default function TemplateMinimalist({ order, theme }: TemplateProps) {
   const [envelopeOpen, setEnvelopeOpen] = useState(false);
@@ -43,6 +46,7 @@ export default function TemplateMinimalist({ order, theme }: TemplateProps) {
         data-testid="section-hero"
       >
         <Particles color={theme.particleColor} count={6} />
+        <FloatingLights color="rgba(100,95,85,0.06)" count={4} spread={false} />
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={envelopeOpen ? { opacity: 1, y: 0 } : {}}
@@ -92,12 +96,13 @@ export default function TemplateMinimalist({ order, theme }: TemplateProps) {
       </motion.section>
 
       <section className="w-full h-[70vh] md:h-[80vh] relative overflow-hidden" data-testid="section-countdown">
-        <img src={minimalHeroImg} alt="Wedding moment" className="w-full h-full object-cover grayscale" data-testid="img-hero" />
+        <BlurRevealImage src={minimalHeroImg} alt="Wedding moment" className="w-full h-full [&_img]:grayscale" data-testid="img-hero" />
         <div className="absolute inset-0 bg-gradient-to-b from-[#faf9f6]/20 to-[#faf9f6]/40" />
       </section>
 
-      <section className={`py-28 md:py-40 px-6 ${theme.bg}`}>
-        <div className="max-w-sm mx-auto text-center">
+      <section className={`py-28 md:py-40 px-6 ${theme.bg} relative`}>
+        <FloatingLights color="rgba(120,115,105,0.05)" count={3} spread={false} />
+        <div className="max-w-sm mx-auto text-center relative z-10">
           <FadeSection>
             <p className={`${theme.bodyFont} ${theme.textSecondary} text-xs tracking-[0.5em] uppercase mb-6`}>Counting Down</p>
           </FadeSection>
@@ -115,8 +120,9 @@ export default function TemplateMinimalist({ order, theme }: TemplateProps) {
       </section>
 
       {content.ourStory && (
-        <section className={`py-28 md:py-40 px-8 md:px-20 ${theme.bgSecondary}`} data-testid="section-story">
-          <div className="max-w-6xl mx-auto grid md:grid-cols-12 gap-12 md:gap-20">
+        <section className={`py-28 md:py-40 px-8 md:px-20 ${theme.bgSecondary} relative`} data-testid="section-story">
+          <FloatingLights color="rgba(100,95,85,0.04)" count={3} />
+          <div className="max-w-6xl mx-auto grid md:grid-cols-12 gap-12 md:gap-20 relative z-10">
             <div className="md:col-span-3">
               <FadeSection>
                 <p className={`${theme.bodyFont} ${theme.textSecondary} text-xs tracking-[0.5em] uppercase sticky top-32`}>Our Story</p>
@@ -135,7 +141,7 @@ export default function TemplateMinimalist({ order, theme }: TemplateProps) {
 
       <section className="grid md:grid-cols-2" data-testid="section-venue">
         <div className="relative aspect-square overflow-hidden">
-          <img src={ringsImg} alt="Wedding rings" className="w-full h-full object-cover" data-testid="img-rings" />
+          <BlurRevealImage src={ringsImg} alt="Wedding rings" className="w-full h-full" data-testid="img-rings" />
         </div>
         <div className={`${theme.bg} flex items-center justify-center p-12 md:p-20`}>
           <FadeSection className="max-w-sm">
@@ -210,8 +216,8 @@ export default function TemplateMinimalist({ order, theme }: TemplateProps) {
         </section>
       )}
 
-      <section className="grid grid-cols-2 md:grid-cols-4" data-testid="section-gallery">
-        {[minimalHeroImg, ringsImg, flowersImg, venueImg].map((img, i) => (
+      <section className="grid grid-cols-2 md:grid-cols-3" data-testid="section-gallery">
+        {[minimalHeroImg, ringsImg, whiteBouquetImg, flowersImg, venueImg, eucalyptusImg].map((img, i) => (
           <div key={i} className="relative aspect-square overflow-hidden group" data-testid={`gallery-item-${i}`}>
             <img src={img} alt={`Gallery ${i + 1}`} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105" />
           </div>

@@ -621,6 +621,106 @@ export function DetailCard({ icon: Icon, title, value, link, theme }: { icon: an
   return inner;
 }
 
+export function BlurRevealImage({ src, alt, className = "", overlayClass = "", "data-testid": dataTestId, ...rest }: { src: string; alt: string; className?: string; overlayClass?: string; "data-testid"?: string; [key: string]: any }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "center center"] });
+  const blur = useTransform(scrollYProgress, [0, 0.6, 1], [12, 4, 0]);
+  const scale = useTransform(scrollYProgress, [0, 1], [1.08, 1]);
+  const opacity = useTransform(scrollYProgress, [0, 0.4, 1], [0.5, 0.8, 1]);
+  const smoothBlur = useSpring(blur, { stiffness: 60, damping: 30 });
+  const smoothScale = useSpring(scale, { stiffness: 60, damping: 30 });
+  const filterStr = useTransform(smoothBlur, (v) => `blur(${v}px)`);
+
+  return (
+    <div ref={ref} className={`relative overflow-hidden ${className}`} data-testid={dataTestId}>
+      <motion.img
+        src={src}
+        alt={alt}
+        className="w-full h-full object-cover"
+        style={{
+          filter: filterStr,
+          scale: smoothScale,
+          opacity,
+        }}
+      />
+      {overlayClass && <div className={`absolute inset-0 ${overlayClass}`} />}
+    </div>
+  );
+}
+
+export function FloatingLights({ color = "rgba(255,255,255,0.15)", count = 8, spread = true }: { color?: string; count?: number; spread?: boolean }) {
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      {Array.from({ length: count }).map((_, i) => {
+        const size = Math.random() * 120 + 40;
+        const startX = spread ? Math.random() * 100 : 40 + Math.random() * 20;
+        const startY = Math.random() * 100;
+        const dur = Math.random() * 10 + 8;
+        return (
+          <motion.div
+            key={i}
+            className="absolute rounded-full"
+            style={{
+              width: size,
+              height: size,
+              background: `radial-gradient(circle, ${color} 0%, transparent 70%)`,
+              left: `${startX}%`,
+              top: `${startY}%`,
+            }}
+            animate={{
+              x: [(Math.random() - 0.5) * 60, (Math.random() - 0.5) * 80, (Math.random() - 0.5) * 60],
+              y: [0, -(Math.random() * 50 + 20), (Math.random() * 30 - 15)],
+              opacity: [0, Math.random() * 0.4 + 0.1, 0],
+              scale: [0.6, 1, 0.7],
+            }}
+            transition={{
+              duration: dur,
+              repeat: Infinity,
+              delay: Math.random() * dur,
+              ease: "easeInOut",
+            }}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+export function ParallaxSection({ children, className = "", speed = 0.3 }: { children: ReactNode; className?: string; speed?: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const y = useTransform(scrollYProgress, [0, 1], [speed * -100, speed * 100]);
+  const smoothY = useSpring(y, { stiffness: 50, damping: 30 });
+
+  return (
+    <div ref={ref} className={`relative overflow-hidden ${className}`}>
+      <motion.div style={{ y: smoothY }} className="w-full h-full">
+        {children}
+      </motion.div>
+    </div>
+  );
+}
+
+export function FloatingDecor({ src, className = "", delay = 0, amplitude = 15 }: { src: string; className?: string; delay?: number; amplitude?: number }) {
+  return (
+    <motion.img
+      src={src}
+      alt=""
+      className={`absolute pointer-events-none ${className}`}
+      animate={{
+        y: [0, -amplitude, 0],
+        rotate: [0, 3, -2, 0],
+      }}
+      transition={{
+        duration: 6 + Math.random() * 4,
+        repeat: Infinity,
+        delay,
+        ease: "easeInOut",
+      }}
+    />
+  );
+}
+
 export interface TemplateProps {
   order: Order;
   theme: ThemeConfig;

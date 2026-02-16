@@ -7,11 +7,17 @@ import {
   Ornament, RsvpSection, ClosingSection, DetailCard, formatWeddingDate, getEventIcon,
   type TemplateProps,
 } from "./shared";
+import { BlurRevealImage, FloatingLights, FloatingDecor } from "./shared";
 
 import sageHeroImg from "@/assets/images/sage-hero.jpg";
 import sageCoupleImg from "@/assets/images/sage-couple.jpg";
 import sageBotanicalImg from "@/assets/images/sage-botanical.jpg";
 import venueImg from "@/assets/images/venue.jpg";
+import greeneryWreathImg from "@assets/c40683fc7230acdec83f853d2426249ea253ea80_1771243555625.png";
+import eucalyptusImg from "@assets/5051562e495ce42b8dbad1fbb98ab124932722f5_1771243555625.jpg";
+import floralCornerImg from "@assets/0873873003f17f8893ffa029c4e8fc8b2f19527f_(1)_1771243555626.png";
+import floralCorner2Img from "@assets/c42b7ccbf2784a855a1a2e6c34d9d8a948b06606_(2)_1771243555626.png";
+import whiteBouquetImg from "@assets/8808cb9958bbe5ba81f82905575b3c045dfdc801_1771243555625.jpg";
 
 export default function TemplateSageGreen({ order, theme }: TemplateProps) {
   const [envelopeOpen, setEnvelopeOpen] = useState(false);
@@ -49,6 +55,10 @@ export default function TemplateSageGreen({ order, theme }: TemplateProps) {
           <div className="absolute inset-0 bg-gradient-to-b from-[#2d3a1e]/70 via-[#2d3a1e]/50 to-[#f7f3eb]" />
         </motion.div>
         <Particles color={theme.particleColor} count={10} />
+        <FloatingLights color="rgba(168,190,140,0.12)" count={6} />
+        <FloatingDecor src={greeneryWreathImg} className="w-40 h-40 md:w-56 md:h-56 -top-8 -right-8 md:-top-12 md:-right-12 opacity-20 z-0" delay={1} amplitude={10} />
+        <FloatingDecor src={floralCornerImg} className="w-24 h-24 md:w-36 md:h-36 top-4 left-4 opacity-15 z-0" delay={2} amplitude={8} />
+        <FloatingDecor src={floralCorner2Img} className="w-20 h-20 md:w-28 md:h-28 bottom-20 right-4 opacity-15 z-0 rotate-180" delay={3} amplitude={12} />
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={envelopeOpen ? { opacity: 1, scale: 1 } : {}}
@@ -102,6 +112,7 @@ export default function TemplateSageGreen({ order, theme }: TemplateProps) {
       </motion.section>
 
       <section className={`py-24 md:py-32 px-6 ${theme.bg}`} data-testid="section-countdown">
+        <FloatingLights color="rgba(120,150,100,0.08)" count={4} spread={false} />
         <div className="max-w-lg mx-auto text-center">
           <FadeSection>
             <p className={`${theme.scriptFont} ${theme.accent} text-xs tracking-[0.4em] uppercase mb-4`}>Counting Down To</p>
@@ -123,12 +134,13 @@ export default function TemplateSageGreen({ order, theme }: TemplateProps) {
 
       {content.ourStory && (
         <section className={`py-20 md:py-28 px-6 ${theme.bgSecondary} relative`} data-testid="section-story">
+          <FloatingLights color="rgba(140,170,120,0.06)" count={5} />
           <div className="max-w-5xl mx-auto">
             <SectionHeading title="Our Story" subtitle="A Love Letter" theme={theme} />
             <FadeSection delay={0.15}>
               <div className="grid md:grid-cols-2 gap-8 items-center">
                 <div className="relative rounded-3xl overflow-hidden aspect-[3/4]">
-                  <img src={sageCoupleImg} alt="Our love story" className="w-full h-full object-cover" data-testid="img-couple" />
+                  <BlurRevealImage src={sageCoupleImg} alt="Our love story" className="w-full h-full" data-testid="img-couple" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#2d3a1e]/40 to-transparent" />
                 </div>
                 <div className={`${theme.glass} rounded-3xl p-8 md:p-10`}>
@@ -145,8 +157,7 @@ export default function TemplateSageGreen({ order, theme }: TemplateProps) {
 
       <section className="relative overflow-hidden">
         <div className="relative h-[50vh] md:h-[60vh]">
-          <img src={sageBotanicalImg} alt="Botanical details" className="w-full h-full object-cover" data-testid="img-botanical" />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#f7f3eb]/80 via-transparent to-[#eee8da]/80" />
+          <BlurRevealImage src={sageBotanicalImg} alt="Botanical details" className="w-full h-full" overlayClass="bg-gradient-to-b from-[#f7f3eb]/80 via-transparent to-[#eee8da]/80" data-testid="img-botanical" />
           <div className="absolute inset-0 flex items-center justify-center">
             <FadeSection className="text-center px-6">
               <p className={`${theme.scriptFont} ${theme.accent} text-sm tracking-[0.4em] uppercase mb-3`}>
@@ -164,7 +175,7 @@ export default function TemplateSageGreen({ order, theme }: TemplateProps) {
           <FadeSection delay={0.15}>
             <div className="grid md:grid-cols-5 gap-6">
               <div className="md:col-span-3 rounded-3xl overflow-hidden aspect-video relative">
-                <img src={venueImg} alt={details.venue} className="w-full h-full object-cover" data-testid="img-venue" />
+                <BlurRevealImage src={venueImg} alt={details.venue} className="w-full h-full" data-testid="img-venue" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#2d3a1e]/30 to-transparent" />
                 {details.googleMapsUrl && (
                   <a
@@ -247,7 +258,7 @@ export default function TemplateSageGreen({ order, theme }: TemplateProps) {
         <div className="max-w-5xl mx-auto relative z-10">
           <SectionHeading title="Gallery" subtitle="Captured Moments" theme={theme} />
           <StaggerChildren className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {[sageHeroImg, sageCoupleImg, sageBotanicalImg, venueImg].map((img, i) => (
+            {[sageHeroImg, sageCoupleImg, whiteBouquetImg, sageBotanicalImg, venueImg, eucalyptusImg].map((img, i) => (
               <motion.div
                 key={i}
                 variants={staggerItem}

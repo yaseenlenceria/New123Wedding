@@ -7,11 +7,16 @@ import {
   Ornament, RsvpSection, ClosingSection, DetailCard, formatWeddingDate, getEventIcon,
   type TemplateProps,
 } from "./shared";
+import { BlurRevealImage, FloatingLights, FloatingDecor } from "./shared";
 
 import roseHeroImg from "@/assets/images/rose-hero.jpg";
 import roseBouquetImg from "@/assets/images/rose-bouquet.jpg";
 import flowersImg from "@/assets/images/flowers.jpg";
 import venueImg from "@/assets/images/venue.jpg";
+import pinkBouquetImg from "@assets/ca6c2fb2693f2ac29b66421237360afadcbbc2b8_1771243555624.webp";
+import blushBouquetImg from "@assets/6e1b0f4e62cbdd7fa2155ab6bf64a0bf1d85cc2c_1771243555624.jpg";
+import rosesBackgroundImg from "@assets/705bc7f41429871f2378cf8a260146ed7b12bf7c_(1)_1771243555626.jpg";
+import floralCorner2Img from "@assets/c42b7ccbf2784a855a1a2e6c34d9d8a948b06606_(1)_1771243555627.png";
 
 export default function TemplateLuxuryGold({ order, theme }: TemplateProps) {
   const [envelopeOpen, setEnvelopeOpen] = useState(false);
@@ -44,10 +49,12 @@ export default function TemplateLuxuryGold({ order, theme }: TemplateProps) {
         data-testid="section-hero"
       >
         <div className="absolute inset-0">
-          <img src={roseHeroImg} alt="" className="w-full h-full object-cover" data-testid="img-hero" />
+          <BlurRevealImage src={rosesBackgroundImg} alt="" className="w-full h-full" data-testid="img-hero" />
           <div className="absolute inset-0 bg-gradient-to-b from-[#3d2422]/50 via-[#3d2422]/30 to-[#fdf2ef]" />
         </div>
         <Particles color={theme.particleColor} count={15} />
+        <FloatingLights color="rgba(192,112,96,0.1)" count={7} />
+        <FloatingDecor src={floralCorner2Img} className="w-24 h-24 md:w-32 md:h-32 bottom-24 left-4 opacity-20 z-0" delay={2} amplitude={10} />
 
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
@@ -108,8 +115,9 @@ export default function TemplateLuxuryGold({ order, theme }: TemplateProps) {
         </motion.div>
       </motion.section>
 
-      <section className={`py-24 md:py-32 px-6 ${theme.bg}`} data-testid="section-countdown">
-        <div className="max-w-lg mx-auto text-center">
+      <section className={`py-24 md:py-32 px-6 ${theme.bg} relative`} data-testid="section-countdown">
+        <FloatingLights color="rgba(192,112,96,0.06)" count={4} spread={false} />
+        <div className="max-w-lg mx-auto text-center relative z-10">
           <FadeSection>
             <p className={`${theme.scriptFont} ${theme.accent} text-xs tracking-[0.4em] uppercase mb-4`}>Counting Down To</p>
             <h2 className={`${theme.headingFont} ${theme.text} text-3xl md:text-4xl mb-2`}>Our Forever</h2>
@@ -131,6 +139,7 @@ export default function TemplateLuxuryGold({ order, theme }: TemplateProps) {
       {content.ourStory && (
         <section className={`py-20 md:py-28 px-6 ${theme.bgSecondary} relative`} data-testid="section-story">
           <Particles color={theme.particleColor} count={6} />
+          <FloatingLights color="rgba(192,112,96,0.05)" count={4} />
           <div className="max-w-5xl mx-auto relative z-10">
             <SectionHeading title="Our Story" subtitle="A Love Story" theme={theme} />
             <FadeSection delay={0.15}>
@@ -145,7 +154,7 @@ export default function TemplateLuxuryGold({ order, theme }: TemplateProps) {
                 </div>
                 <div className="md:col-span-2">
                   <div className="relative rounded-[2rem] overflow-hidden aspect-[3/4]">
-                    <img src={roseBouquetImg} alt="Wedding flowers" className="w-full h-full object-cover" data-testid="img-flowers" />
+                    <BlurRevealImage src={pinkBouquetImg} alt="Wedding flowers" className="w-full h-full" data-testid="img-flowers" />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#c07060]/20 to-transparent" />
                   </div>
                 </div>
@@ -157,7 +166,7 @@ export default function TemplateLuxuryGold({ order, theme }: TemplateProps) {
 
       <section className="relative overflow-hidden">
         <div className="relative h-[40vh] md:h-[50vh]">
-          <img src={flowersImg} alt="Floral decoration" className="w-full h-full object-cover" data-testid="img-floral" />
+          <BlurRevealImage src={blushBouquetImg} alt="Floral decoration" className="w-full h-full" data-testid="img-floral" />
           <div className="absolute inset-0 bg-gradient-to-r from-[#fdf2ef]/90 via-[#fdf2ef]/50 to-[#fdf2ef]/90" />
           <div className="absolute inset-0 flex items-center justify-center">
             <FadeSection className="text-center px-6">
@@ -176,7 +185,7 @@ export default function TemplateLuxuryGold({ order, theme }: TemplateProps) {
           <FadeSection delay={0.15}>
             <div className="rounded-[2rem] overflow-hidden">
               <div className="relative h-72 md:h-96">
-                <img src={venueImg} alt={details.venue} className="w-full h-full object-cover" data-testid="img-venue" />
+                <BlurRevealImage src={venueImg} alt={details.venue} className="w-full h-full" data-testid="img-venue" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#fdf2ef] via-transparent to-transparent" />
                 {details.googleMapsUrl && (
                   <a
@@ -253,10 +262,11 @@ export default function TemplateLuxuryGold({ order, theme }: TemplateProps) {
 
       <section className={`py-24 md:py-32 px-6 ${theme.bgSecondary} relative`} data-testid="section-gallery">
         <Particles color={theme.particleColor} count={6} />
+        <FloatingLights color="rgba(192,112,96,0.04)" count={3} />
         <div className="max-w-5xl mx-auto relative z-10">
           <SectionHeading title="Gallery" subtitle="Moments of Joy" theme={theme} />
           <StaggerChildren className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {[roseHeroImg, roseBouquetImg, flowersImg, venueImg].map((img, i) => (
+            {[rosesBackgroundImg, pinkBouquetImg, blushBouquetImg, roseHeroImg, venueImg, flowersImg].map((img, i) => (
               <motion.div
                 key={i}
                 variants={staggerItem}
