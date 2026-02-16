@@ -1,34 +1,100 @@
 import { useState, useEffect, useRef } from "react";
-import { motion, useInView } from "framer-motion";
-import { MapPin, Clock, ChevronDown, Music, Pause, Heart, Shirt, Bus, Hotel, Gift, Users, UtensilsCrossed, PartyPopper, Church, GlassWater, Send } from "lucide-react";
+import { motion, useInView, useScroll, useTransform, useSpring, AnimatePresence } from "framer-motion";
+import { MapPin, Clock, ChevronDown, Music, Pause, Heart, Shirt, Bus, Hotel, Gift, UtensilsCrossed, PartyPopper, Church, GlassWater, Send, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { type ThemeConfig } from "@/lib/themes";
 import type { Order } from "@shared/schema";
 
-function Section({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
+function Ornament({ theme, className = "" }: { theme: ThemeConfig; className?: string }) {
   return (
-    <motion.section
+    <div className={`flex items-center justify-center gap-3 ${className}`}>
+      <div className={`h-px w-12 bg-gradient-to-r from-transparent ${theme.gradient}`} />
+      <svg width="16" height="16" viewBox="0 0 16 16" className={`${theme.accent} opacity-40`}>
+        <path d="M8 0L9.8 6.2L16 8L9.8 9.8L8 16L6.2 9.8L0 8L6.2 6.2Z" fill="currentColor" />
+      </svg>
+      <div className={`h-px w-12 bg-gradient-to-l from-transparent ${theme.gradient}`} />
+    </div>
+  );
+}
+
+function FadeSection({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-60px" });
+  return (
+    <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 50 }}
+      initial={{ opacity: 0, y: 40 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.8, ease: "easeOut" }}
+      transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay }}
       className={className}
     >
+      {children}
+    </motion.div>
+  );
+}
+
+function StaggerChildren({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-40px" });
+  return (
+    <motion.div
+      ref={ref}
+      initial="hidden"
+      animate={inView ? "visible" : "hidden"}
+      variants={{ visible: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } } }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+const staggerItem = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
+};
+
+function ParallaxSection({ children, className = "", speed = 0.15 }: { children: React.ReactNode; className?: string; speed?: number }) {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const y = useTransform(scrollYProgress, [0, 1], [60 * speed, -60 * speed]);
+  const smoothY = useSpring(y, { stiffness: 100, damping: 30 });
+  return (
+    <motion.section ref={ref} style={{ y: smoothY }} className={className}>
       {children}
     </motion.section>
   );
 }
 
-function SectionTitle({ title, subtitle, theme }: { title: string; subtitle?: string; theme: ThemeConfig }) {
+function SectionHeading({ title, subtitle, theme }: { title: string; subtitle?: string; theme: ThemeConfig }) {
   return (
-    <div className="text-center mb-8">
-      <p className={`${theme.scriptFont} ${theme.accent} text-sm tracking-[0.3em] uppercase mb-2`}>{subtitle || "The"}</p>
-      <h2 className={`${theme.headingFont} ${theme.text} text-3xl md:text-4xl`}>{title}</h2>
-      <div className={`w-12 h-px mx-auto mt-4 bg-gradient-to-r ${theme.gradient}`} />
-    </div>
+    <FadeSection className="text-center mb-10">
+      {subtitle && (
+        <p className={`${theme.scriptFont} ${theme.accent} text-xs tracking-[0.4em] uppercase mb-3 opacity-80`}>
+          {subtitle}
+        </p>
+      )}
+      <h2 className={`${theme.headingFont} ${theme.text} text-3xl md:text-5xl leading-snug`}>{title}</h2>
+      <Ornament theme={theme} className="mt-5" />
+    </FadeSection>
+  );
+}
+
+function AnimatedCounter({ value, theme }: { value: number; theme: ThemeConfig }) {
+  return (
+    <AnimatePresence mode="popLayout">
+      <motion.span
+        key={value}
+        initial={{ y: 20, opacity: 0, scale: 0.8 }}
+        animate={{ y: 0, opacity: 1, scale: 1 }}
+        exit={{ y: -20, opacity: 0, scale: 0.8 }}
+        transition={{ type: "spring", stiffness: 300, damping: 25 }}
+        className={`block text-3xl md:text-4xl ${theme.headingFont} ${theme.text} tabular-nums`}
+      >
+        {String(value).padStart(2, "0")}
+      </motion.span>
+    </AnimatePresence>
   );
 }
 
@@ -54,26 +120,23 @@ function Countdown({ targetDate, theme }: { targetDate: string; theme: ThemeConf
   const units = [
     { label: "Days", value: time.days },
     { label: "Hours", value: time.hours },
-    { label: "Mins", value: time.minutes },
-    { label: "Secs", value: time.seconds },
+    { label: "Minutes", value: time.minutes },
+    { label: "Seconds", value: time.seconds },
   ];
 
   return (
-    <div className="flex justify-center gap-3">
+    <StaggerChildren className="flex justify-center gap-3 md:gap-5">
       {units.map((u) => (
-        <div key={u.label} className={`${theme.glass} rounded-xl px-4 py-3 min-w-[70px] text-center`}>
-          <motion.span
-            key={u.value}
-            initial={{ scale: 1.1, opacity: 0.7 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className={`block text-2xl md:text-3xl ${theme.headingFont} ${theme.text} tabular-nums`}
-          >
-            {String(u.value).padStart(2, "0")}
-          </motion.span>
-          <span className={`text-[10px] uppercase tracking-[0.2em] ${theme.textSecondary}`}>{u.label}</span>
-        </div>
+        <motion.div
+          key={u.label}
+          variants={staggerItem}
+          className={`${theme.glass} rounded-2xl px-4 py-4 md:px-6 md:py-5 min-w-[72px] md:min-w-[90px] text-center`}
+        >
+          <AnimatedCounter value={u.value} theme={theme} />
+          <span className={`text-[9px] md:text-[10px] uppercase tracking-[0.25em] ${theme.textSecondary} mt-1 block`}>{u.label}</span>
+        </motion.div>
       ))}
-    </div>
+    </StaggerChildren>
   );
 }
 
@@ -86,52 +149,82 @@ function getEventIcon(event: string) {
   return Clock;
 }
 
+function formatWeddingDate(dateStr: string) {
+  try {
+    return new Date(dateStr + "T12:00:00").toLocaleDateString("en-US", {
+      weekday: "long", year: "numeric", month: "long", day: "numeric",
+    });
+  } catch { return dateStr; }
+}
+
 export default function WeddingTemplate({ order, theme }: { order: Order; theme: ThemeConfig }) {
   const [musicPlaying, setMusicPlaying] = useState(false);
   const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
+  const heroRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+  const heroScale = useTransform(scrollYProgress, [0, 0.8], [1, 0.95]);
+
   const details = order.weddingDetails || {} as any;
   const content = order.generatedContent || {} as any;
   const names = details.coupleNames || "Couple";
   const nameParts = names.split(/\s*[&]\s*/);
+  const welcomeMsg = typeof content.welcomeMessage === "object"
+    ? (content.welcomeMessage as any).title || (content.welcomeMessage as any).subtitle || ""
+    : content.welcomeMessage || "";
 
   return (
-    <div className={`min-h-screen ${theme.bg} overflow-x-hidden`}>
+    <div className={`min-h-screen ${theme.bg} overflow-x-hidden selection:bg-current/10`}>
       {details.musicLink && (
         <motion.button
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5 }}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 2, type: "spring" }}
           onClick={() => setMusicPlaying(!musicPlaying)}
-          className={`fixed top-4 right-4 z-50 w-10 h-10 rounded-full ${theme.glass} flex items-center justify-center`}
+          className={`fixed top-5 right-5 z-50 w-11 h-11 rounded-full ${theme.glass} flex items-center justify-center shadow-lg`}
           data-testid="button-music"
         >
           {musicPlaying ? <Pause className={`w-4 h-4 ${theme.accent}`} /> : <Music className={`w-4 h-4 ${theme.accent}`} />}
         </motion.button>
       )}
 
-      {/* 1. HERO */}
-      <section className={`min-h-screen flex flex-col items-center justify-center px-6 relative ${theme.bg}`}>
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.2 }} className="text-center">
+      {/* ═══════════════════════════════════════
+          1. HERO — Full-screen parallax fade
+      ═══════════════════════════════════════ */}
+      <motion.section
+        ref={heroRef}
+        style={{ opacity: heroOpacity, scale: heroScale }}
+        className={`min-h-screen flex flex-col items-center justify-center px-6 relative ${theme.bg}`}
+      >
+        <div className="text-center max-w-xl mx-auto">
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
-            className={`${theme.scriptFont} ${theme.accent} text-base tracking-[0.4em] uppercase mb-6`}
+            transition={{ delay: 0.4, duration: 1, ease: [0.22, 1, 0.36, 1] }}
+            className={`${theme.scriptFont} ${theme.accent} text-xs md:text-sm tracking-[0.5em] uppercase mb-8`}
           >
-            Together with their families
+            Together With Their Families
           </motion.p>
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.6, duration: 0.8 }}
-            className="mb-6"
+            transition={{ delay: 0.7, duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
           >
-            <h1 className={`${theme.headingFont} ${theme.text} text-5xl md:text-7xl leading-tight`}>
+            <h1 className={`${theme.headingFont} ${theme.text} text-6xl md:text-8xl leading-none tracking-tight`}>
               {nameParts[0]?.trim()}
             </h1>
-            <p className={`${theme.scriptFont} ${theme.accent} text-2xl my-2`}>&</p>
-            <h1 className={`${theme.headingFont} ${theme.text} text-5xl md:text-7xl leading-tight`}>
+            <motion.div
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ delay: 1.2, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+              className="flex items-center justify-center gap-4 my-4"
+            >
+              <div className={`h-px w-16 bg-gradient-to-r from-transparent ${theme.gradient}`} />
+              <span className={`${theme.scriptFont} ${theme.accent} text-3xl`}>&amp;</span>
+              <div className={`h-px w-16 bg-gradient-to-l from-transparent ${theme.gradient}`} />
+            </motion.div>
+            <h1 className={`${theme.headingFont} ${theme.text} text-6xl md:text-8xl leading-none tracking-tight`}>
               {nameParts[1]?.trim() || "Partner"}
             </h1>
           </motion.div>
@@ -139,275 +232,353 @@ export default function WeddingTemplate({ order, theme }: { order: Order; theme:
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1, duration: 0.8 }}
-            className="space-y-3"
+            transition={{ delay: 1.5, duration: 1, ease: [0.22, 1, 0.36, 1] }}
+            className="mt-10 space-y-2"
           >
-            <div className={`w-16 h-px mx-auto bg-gradient-to-r ${theme.gradient}`} />
-            <p className={`${theme.bodyFont} ${theme.textSecondary} text-lg tracking-wide`}>
-              {details.weddingDate ? new Date(details.weddingDate + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" }) : "Date TBA"}
+            <Ornament theme={theme} />
+            <p className={`${theme.bodyFont} ${theme.textSecondary} text-base md:text-lg tracking-wider mt-4`}>
+              {details.weddingDate ? formatWeddingDate(details.weddingDate) : "Date To Be Announced"}
             </p>
-            <p className={`${theme.bodyFont} ${theme.textSecondary} text-sm`}>
-              {details.venue}
-            </p>
+            <p className={`${theme.bodyFont} ${theme.textSecondary} text-sm opacity-70`}>{details.venue}</p>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.4, duration: 0.8 }}
-            className="mt-8 flex flex-col items-center gap-3"
-          >
-            {details.googleMapsUrl && (
-              <a href={details.googleMapsUrl} target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-2 px-5 py-2 rounded-full ${theme.glass} ${theme.textSecondary} text-sm ${theme.bodyFont} tracking-wide`} data-testid="link-maps-hero">
-                <MapPin className="w-3.5 h-3.5" /> View Location
-              </a>
-            )}
-          </motion.div>
-        </motion.div>
+          {details.googleMapsUrl && (
+            <motion.a
+              href={details.googleMapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.8, duration: 0.8 }}
+              className={`inline-flex items-center gap-2 px-6 py-2.5 rounded-full ${theme.glass} ${theme.textSecondary} text-xs ${theme.bodyFont} tracking-widest uppercase mt-8`}
+              data-testid="link-maps-hero"
+            >
+              <MapPin className="w-3.5 h-3.5" /> View Location
+            </motion.a>
+          )}
+        </div>
 
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 2, duration: 1 }}
-          className="absolute bottom-8"
+          transition={{ delay: 2.5, duration: 1 }}
+          className="absolute bottom-10"
         >
-          <ChevronDown className={`w-6 h-6 ${theme.textSecondary} animate-scroll-hint`} />
+          <div className="flex flex-col items-center gap-2">
+            <span className={`${theme.bodyFont} ${theme.textSecondary} text-[10px] tracking-[0.3em] uppercase opacity-50`}>Scroll</span>
+            <ChevronDown className={`w-5 h-5 ${theme.textSecondary} opacity-40 animate-scroll-hint`} />
+          </div>
         </motion.div>
-      </section>
+      </motion.section>
 
-      {/* 2. COUNTDOWN */}
-      <Section className={`py-20 px-6 ${theme.bgSecondary}`}>
+      {/* ═══════════════════════════════════════
+          2. COUNTDOWN — Animated timer
+      ═══════════════════════════════════════ */}
+      <section className={`py-24 md:py-32 px-6 ${theme.bgSecondary}`}>
         <div className="max-w-lg mx-auto text-center">
-          <p className={`${theme.scriptFont} ${theme.accent} text-sm tracking-[0.3em] uppercase mb-3`}>Save the Date</p>
-          <h2 className={`${theme.headingFont} ${theme.text} text-3xl mb-2`}>The Forever Starts In...</h2>
-          <div className={`w-12 h-px mx-auto mb-8 bg-gradient-to-r ${theme.gradient}`} />
-          <Countdown targetDate={details.weddingDate || "2025-12-31"} theme={theme} />
-          {content.welcomeMessage && (
-            <p className={`${theme.bodyFont} ${theme.textSecondary} mt-8 text-sm leading-relaxed italic`}>
-              "{typeof content.welcomeMessage === 'object' ? (content.welcomeMessage as any).title || (content.welcomeMessage as any).subtitle || '' : content.welcomeMessage}"
-            </p>
+          <FadeSection>
+            <p className={`${theme.scriptFont} ${theme.accent} text-xs tracking-[0.4em] uppercase mb-4`}>Counting Down To</p>
+            <h2 className={`${theme.headingFont} ${theme.text} text-3xl md:text-4xl mb-2`}>Forever Begins</h2>
+            <Ornament theme={theme} className="mb-10" />
+          </FadeSection>
+          <FadeSection delay={0.2}>
+            <Countdown targetDate={details.weddingDate || "2027-12-31"} theme={theme} />
+          </FadeSection>
+          {welcomeMsg && (
+            <FadeSection delay={0.4}>
+              <p className={`${theme.bodyFont} ${theme.textSecondary} mt-10 text-sm md:text-base leading-relaxed italic max-w-sm mx-auto`}>
+                &ldquo;{welcomeMsg}&rdquo;
+              </p>
+            </FadeSection>
           )}
         </div>
-      </Section>
+      </section>
 
-      {/* OUR STORY */}
+      {/* ═══════════════════════════════════════
+          3. OUR STORY — Elegant text reveal
+      ═══════════════════════════════════════ */}
       {content.ourStory && (
-        <Section className={`py-20 px-6 ${theme.bg}`}>
+        <ParallaxSection className={`py-24 md:py-32 px-6 ${theme.bg}`} speed={0.1}>
           <div className="max-w-lg mx-auto">
-            <SectionTitle title="Our Story" subtitle="Love" theme={theme} />
-            <p className={`${theme.bodyFont} ${theme.textSecondary} text-base leading-relaxed text-center whitespace-pre-line`}>
-              {content.ourStory}
-            </p>
+            <SectionHeading title="Our Story" subtitle="A Love Letter" theme={theme} />
+            <FadeSection delay={0.15}>
+              <div className={`${theme.glass} rounded-3xl p-8 md:p-12`}>
+                <Heart className={`w-8 h-8 ${theme.accent} opacity-30 mx-auto mb-6`} />
+                <p className={`${theme.bodyFont} ${theme.textSecondary} text-sm md:text-base leading-[2] text-center whitespace-pre-line`}>
+                  {content.ourStory}
+                </p>
+              </div>
+            </FadeSection>
           </div>
-        </Section>
+        </ParallaxSection>
       )}
 
-      {/* 3. VENUE */}
-      <Section className={`py-20 px-6 ${theme.bgSecondary}`}>
+      {/* ═══════════════════════════════════════
+          4. VENUE — Map & details
+      ═══════════════════════════════════════ */}
+      <section className={`py-24 md:py-32 px-6 ${theme.bgSecondary}`}>
         <div className="max-w-lg mx-auto">
-          <SectionTitle title={details.venue || "The Venue"} subtitle="Venue" theme={theme} />
-          <div className={`${theme.glass} rounded-2xl overflow-hidden`}>
-            <div className={`h-48 ${theme.bgSecondary} flex items-center justify-center`}>
-              <MapPin className={`w-12 h-12 ${theme.textSecondary} opacity-30`} />
+          <SectionHeading title={details.venue || "The Venue"} subtitle="Celebrate With Us" theme={theme} />
+          <FadeSection delay={0.15}>
+            <div className={`${theme.glass} rounded-3xl overflow-hidden`}>
+              <div className={`h-56 ${theme.bgSecondary} relative flex items-center justify-center`}>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <motion.div
+                    animate={{ scale: [1, 1.05, 1] }}
+                    transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                  >
+                    <MapPin className={`w-16 h-16 ${theme.textSecondary} opacity-15`} />
+                  </motion.div>
+                </div>
+                {details.googleMapsUrl && (
+                  <a
+                    href={details.googleMapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`relative z-10 inline-flex items-center gap-2 px-5 py-2.5 rounded-full ${theme.buttonBg} ${theme.buttonText} text-xs ${theme.bodyFont} tracking-widest uppercase shadow-lg`}
+                    data-testid="link-maps-venue"
+                  >
+                    <MapPin className="w-3.5 h-3.5" /> Open in Maps
+                  </a>
+                )}
+              </div>
+              <div className="p-8 text-center space-y-4">
+                {details.venueAddress && (
+                  <p className={`${theme.bodyFont} ${theme.textSecondary} text-sm tracking-wide`}>{details.venueAddress}</p>
+                )}
+                {content.venueDetails && (
+                  <p className={`${theme.bodyFont} ${theme.textSecondary} text-sm leading-relaxed opacity-80`}>{content.venueDetails}</p>
+                )}
+              </div>
             </div>
-            <div className="p-6 text-center space-y-3">
-              {details.venueAddress && (
-                <p className={`${theme.bodyFont} ${theme.textSecondary} text-sm`}>{details.venueAddress}</p>
-              )}
-              {content.venueDetails && (
-                <p className={`${theme.bodyFont} ${theme.textSecondary} text-sm leading-relaxed`}>{content.venueDetails}</p>
-              )}
-              {details.googleMapsUrl && (
-                <a href={details.googleMapsUrl} target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full ${theme.buttonBg} ${theme.buttonText} text-sm ${theme.bodyFont} tracking-wide`} data-testid="link-maps-venue">
-                  <MapPin className="w-4 h-4" /> Get Directions
-                </a>
-              )}
-            </div>
-          </div>
+          </FadeSection>
         </div>
-      </Section>
+      </section>
 
-      {/* 4. THE DAY / TIMELINE */}
+      {/* ═══════════════════════════════════════
+          5. TIMELINE — Staggered event cards
+      ═══════════════════════════════════════ */}
       {details.agenda && details.agenda.length > 0 && (
-        <Section className={`py-20 px-6 ${theme.bg}`}>
+        <ParallaxSection className={`py-24 md:py-32 px-6 ${theme.bg}`} speed={0.08}>
           <div className="max-w-lg mx-auto">
-            <SectionTitle title="The Day" subtitle="Schedule" theme={theme} />
+            <SectionHeading title="The Day" subtitle="Schedule" theme={theme} />
             {content.agendaIntro && (
-              <p className={`${theme.bodyFont} ${theme.textSecondary} text-center text-sm mb-8`}>{content.agendaIntro}</p>
+              <FadeSection>
+                <p className={`${theme.bodyFont} ${theme.textSecondary} text-center text-sm mb-10 opacity-80`}>{content.agendaIntro}</p>
+              </FadeSection>
             )}
             <div className="relative">
-              <div className={`absolute left-6 top-0 bottom-0 w-px ${theme.timelineLine}`} />
-              <div className="space-y-6">
+              <div className={`absolute left-[23px] top-4 bottom-4 w-px ${theme.timelineLine}`} />
+              <StaggerChildren className="space-y-5">
                 {details.agenda.map((item: { time: string; event: string }, i: number) => {
                   const Icon = getEventIcon(item.event);
                   return (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: i * 0.15, duration: 0.5 }}
-                      className="flex items-center gap-4 pl-0"
-                    >
-                      <div className={`relative z-10 w-12 h-12 rounded-full ${theme.glass} flex items-center justify-center flex-shrink-0`}>
+                    <motion.div key={i} variants={staggerItem} className="flex items-start gap-5 pl-0">
+                      <div className={`relative z-10 w-12 h-12 rounded-full ${theme.glass} flex items-center justify-center flex-shrink-0 shadow-sm`}>
                         <Icon className={`w-5 h-5 ${theme.accent}`} />
                       </div>
-                      <div className={`flex-1 ${theme.glass} rounded-xl p-4`}>
-                        <p className={`${theme.bodyFont} ${theme.accent} text-xs tracking-[0.2em] uppercase mb-1`}>{item.time}</p>
-                        <p className={`${theme.headingFont} ${theme.text} text-base`}>{item.event}</p>
+                      <div className={`flex-1 ${theme.glass} rounded-2xl p-5 shadow-sm`}>
+                        <p className={`${theme.scriptFont} ${theme.accent} text-[10px] tracking-[0.3em] uppercase mb-1`}>{item.time}</p>
+                        <p className={`${theme.headingFont} ${theme.text} text-lg`}>{item.event}</p>
                       </div>
                     </motion.div>
                   );
                 })}
-              </div>
+              </StaggerChildren>
             </div>
           </div>
-        </Section>
+        </ParallaxSection>
       )}
 
-      {/* 5. DETAILS */}
-      <Section className={`py-20 px-6 ${theme.bgSecondary}`}>
-        <div className="max-w-lg mx-auto">
-          <SectionTitle title="Details" subtitle="Important" theme={theme} />
-          {content.detailsIntro && (
-            <p className={`${theme.bodyFont} ${theme.textSecondary} text-center text-sm mb-8`}>{content.detailsIntro}</p>
-          )}
-          <div className="grid grid-cols-2 gap-3">
-            {details.dressCode && (
-              <DetailCard icon={Shirt} title="Dress Code" value={details.dressCode} theme={theme} />
+      {/* ═══════════════════════════════════════
+          6. DETAILS — Info cards grid
+      ═══════════════════════════════════════ */}
+      {(details.dressCode || details.transportation || details.accommodation || details.registryLinks) && (
+        <section className={`py-24 md:py-32 px-6 ${theme.bgSecondary}`}>
+          <div className="max-w-lg mx-auto">
+            <SectionHeading title="Details" subtitle="Good to Know" theme={theme} />
+            {content.detailsIntro && (
+              <FadeSection>
+                <p className={`${theme.bodyFont} ${theme.textSecondary} text-center text-sm mb-10 opacity-80`}>{content.detailsIntro}</p>
+              </FadeSection>
             )}
-            {details.transportation && (
-              <DetailCard icon={Bus} title="Transportation" value={details.transportation} theme={theme} />
-            )}
-            {details.accommodation && (
-              <DetailCard icon={Hotel} title="Accommodation" value={details.accommodation} theme={theme} />
-            )}
-            {details.registryLinks && (
-              <DetailCard icon={Gift} title="Registry" value="View Registry" link={details.registryLinks} theme={theme} />
-            )}
+            <StaggerChildren className="grid grid-cols-2 gap-4">
+              {details.dressCode && (
+                <motion.div variants={staggerItem}>
+                  <DetailCard icon={Shirt} title="Dress Code" value={details.dressCode} theme={theme} />
+                </motion.div>
+              )}
+              {details.transportation && (
+                <motion.div variants={staggerItem}>
+                  <DetailCard icon={Bus} title="Transportation" value={details.transportation} theme={theme} />
+                </motion.div>
+              )}
+              {details.accommodation && (
+                <motion.div variants={staggerItem}>
+                  <DetailCard icon={Hotel} title="Accommodation" value={details.accommodation} theme={theme} />
+                </motion.div>
+              )}
+              {details.registryLinks && (
+                <motion.div variants={staggerItem}>
+                  <DetailCard icon={Gift} title="Registry" value="View Registry" link={details.registryLinks} theme={theme} />
+                </motion.div>
+              )}
+            </StaggerChildren>
           </div>
-        </div>
-      </Section>
+        </section>
+      )}
 
-      {/* 6. GALLERY */}
-      <Section className={`py-20 px-6 ${theme.bg}`}>
+      {/* ═══════════════════════════════════════
+          7. GALLERY — Animated grid
+      ═══════════════════════════════════════ */}
+      <ParallaxSection className={`py-24 md:py-32 px-6 ${theme.bg}`} speed={0.06}>
         <div className="max-w-lg mx-auto">
-          <SectionTitle title="Gallery" subtitle="Moments" theme={theme} />
-          <div className="grid grid-cols-2 gap-3">
+          <SectionHeading title="Gallery" subtitle="Captured Moments" theme={theme} />
+          <StaggerChildren className="grid grid-cols-2 gap-3">
             {[1, 2, 3, 4].map((i) => (
               <motion.div
                 key={i}
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.3 }}
-                className={`aspect-square rounded-xl ${theme.glass} flex items-center justify-center`}
+                variants={staggerItem}
+                whileHover={{ scale: 1.03, y: -4 }}
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                className={`aspect-square rounded-2xl ${theme.glass} flex items-center justify-center cursor-pointer shadow-sm`}
               >
-                <Heart className={`w-8 h-8 ${theme.textSecondary} opacity-20`} />
+                <Heart className={`w-8 h-8 ${theme.textSecondary} opacity-15`} />
               </motion.div>
             ))}
-          </div>
-          <p className={`${theme.bodyFont} ${theme.textSecondary} text-center text-xs mt-4`}>Photos will be added closer to the date</p>
+          </StaggerChildren>
+          <FadeSection delay={0.3}>
+            <p className={`${theme.bodyFont} ${theme.textSecondary} text-center text-xs mt-5 opacity-50`}>
+              Photos will be added closer to the celebration
+            </p>
+          </FadeSection>
         </div>
-      </Section>
+      </ParallaxSection>
 
-      {/* 7. RSVP */}
-      <Section className={`py-20 px-6 ${theme.bgSecondary}`}>
+      {/* ═══════════════════════════════════════
+          8. RSVP — Interactive form
+      ═══════════════════════════════════════ */}
+      <section className={`py-24 md:py-32 px-6 ${theme.bgSecondary}`}>
         <div className="max-w-lg mx-auto text-center">
-          <p className={`${theme.scriptFont} ${theme.accent} text-sm tracking-[0.3em] uppercase mb-3`}>Please</p>
-          <h2 className={`${theme.headingFont} ${theme.text} text-5xl md:text-6xl mb-2`}>RSVP</h2>
-          <div className={`w-12 h-px mx-auto mb-4 bg-gradient-to-r ${theme.gradient}`} />
-          <p className={`${theme.bodyFont} ${theme.textSecondary} text-sm mb-8`}>
-            {content.rsvpMessage || "We'd love for you to celebrate with us!"}
-          </p>
+          <FadeSection>
+            <p className={`${theme.scriptFont} ${theme.accent} text-xs tracking-[0.4em] uppercase mb-4`}>Kindly</p>
+            <h2 className={`${theme.headingFont} ${theme.text} text-5xl md:text-7xl mb-2 tracking-tight`}>RSVP</h2>
+            <Ornament theme={theme} className="mb-4" />
+            <p className={`${theme.bodyFont} ${theme.textSecondary} text-sm mb-10 max-w-sm mx-auto`}>
+              {content.rsvpMessage || "We would be honored by your presence. Please let us know if you can join us."}
+            </p>
+          </FadeSection>
 
-          {rsvpSubmitted ? (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ type: "spring" }}
-              className={`${theme.glass} rounded-2xl p-8`}
-            >
+          <FadeSection delay={0.2}>
+            {rsvpSubmitted ? (
               <motion.div
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ repeat: Infinity, duration: 2 }}
+                initial={{ opacity: 0, scale: 0.85, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                className={`${theme.glass} rounded-3xl p-10 md:p-14`}
               >
-                <Heart className={`w-12 h-12 ${theme.accent} mx-auto mb-4`} />
+                <motion.div
+                  animate={{ scale: [1, 1.15, 1], rotate: [0, 5, -5, 0] }}
+                  transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+                >
+                  <Sparkles className={`w-14 h-14 ${theme.accent} mx-auto mb-6`} />
+                </motion.div>
+                <h3 className={`${theme.headingFont} ${theme.text} text-3xl mb-3`}>Thank You</h3>
+                <p className={`${theme.bodyFont} ${theme.textSecondary} text-sm`}>
+                  We can&apos;t wait to celebrate with you
+                </p>
               </motion.div>
-              <h3 className={`${theme.headingFont} ${theme.text} text-2xl mb-2`}>Thank You!</h3>
-              <p className={`${theme.bodyFont} ${theme.textSecondary} text-sm`}>We can't wait to celebrate with you</p>
-            </motion.div>
-          ) : (
-            <div className={`${theme.glass} rounded-2xl p-6 text-left space-y-4`}>
-              <div>
-                <label className={`text-xs ${theme.textSecondary} ${theme.bodyFont} uppercase tracking-wider`}>Full Name</label>
-                <Input data-testid="input-rsvp-name" className={`mt-1 bg-transparent ${theme.glassBorder} ${theme.text} ${theme.bodyFont}`} placeholder="Your name" />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
+            ) : (
+              <div className={`${theme.glass} rounded-3xl p-7 md:p-10 text-left space-y-5`}>
                 <div>
-                  <label className={`text-xs ${theme.textSecondary} ${theme.bodyFont} uppercase tracking-wider`}>Guests</label>
-                  <Input data-testid="input-rsvp-guests" type="number" min={1} max={5} defaultValue={1} className={`mt-1 bg-transparent ${theme.glassBorder} ${theme.text} ${theme.bodyFont}`} />
+                  <label className={`text-[10px] ${theme.textSecondary} ${theme.bodyFont} uppercase tracking-[0.2em] block mb-1.5`}>Full Name</label>
+                  <Input data-testid="input-rsvp-name" className={`bg-transparent ${theme.glassBorder} ${theme.text} ${theme.bodyFont} h-12 rounded-xl`} placeholder="Your name" />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className={`text-[10px] ${theme.textSecondary} ${theme.bodyFont} uppercase tracking-[0.2em] block mb-1.5`}>Number of Guests</label>
+                    <Input data-testid="input-rsvp-guests" type="number" min={1} max={5} defaultValue={1} className={`bg-transparent ${theme.glassBorder} ${theme.text} ${theme.bodyFont} h-12 rounded-xl`} />
+                  </div>
+                  <div>
+                    <label className={`text-[10px] ${theme.textSecondary} ${theme.bodyFont} uppercase tracking-[0.2em] block mb-1.5`}>Meal Preference</label>
+                    <select data-testid="select-rsvp-meal" className={`w-full rounded-xl px-3 h-12 bg-transparent ${theme.text} ${theme.bodyFont} border ${theme.glassBorder} text-sm`}>
+                      {(details.guestMealOptions || ["Beef", "Chicken", "Vegetarian"]).map((m: string) => (
+                        <option key={m} value={m}>{m}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
                 <div>
-                  <label className={`text-xs ${theme.textSecondary} ${theme.bodyFont} uppercase tracking-wider`}>Meal</label>
-                  <select data-testid="select-rsvp-meal" className={`mt-1 w-full rounded-md px-3 h-9 bg-transparent ${theme.text} ${theme.bodyFont} border ${theme.glassBorder} text-sm`}>
-                    {(details.guestMealOptions || ["Beef", "Chicken", "Vegetarian"]).map((m: string) => (
-                      <option key={m} value={m}>{m}</option>
-                    ))}
-                  </select>
+                  <label className={`text-[10px] ${theme.textSecondary} ${theme.bodyFont} uppercase tracking-[0.2em] block mb-1.5`}>Song Request</label>
+                  <Input data-testid="input-rsvp-song" className={`bg-transparent ${theme.glassBorder} ${theme.text} ${theme.bodyFont} h-12 rounded-xl`} placeholder="What should we dance to?" />
                 </div>
+                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                  <Button
+                    data-testid="button-rsvp-submit"
+                    onClick={() => setRsvpSubmitted(true)}
+                    className={`w-full h-14 ${theme.buttonBg} ${theme.buttonText} ${theme.bodyFont} tracking-widest uppercase text-xs gap-2 rounded-xl shadow-lg`}
+                  >
+                    <Send className="w-4 h-4" /> Send RSVP
+                  </Button>
+                </motion.div>
               </div>
-              <div>
-                <label className={`text-xs ${theme.textSecondary} ${theme.bodyFont} uppercase tracking-wider`}>Song Request</label>
-                <Input data-testid="input-rsvp-song" className={`mt-1 bg-transparent ${theme.glassBorder} ${theme.text} ${theme.bodyFont}`} placeholder="Your favourite song" />
-              </div>
-              <Button
-                data-testid="button-rsvp-submit"
-                onClick={() => setRsvpSubmitted(true)}
-                className={`w-full ${theme.buttonBg} ${theme.buttonText} ${theme.bodyFont} tracking-wide gap-2`}
-              >
-                <Send className="w-4 h-4" /> Send RSVP
-              </Button>
-            </div>
-          )}
+            )}
+          </FadeSection>
         </div>
-      </Section>
+      </section>
 
-      {/* 8. CLOSING */}
-      <section className={`py-24 px-6 ${theme.bg} text-center`}>
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1 }}
-        >
-          <div className={`w-20 h-px mx-auto mb-8 bg-gradient-to-r ${theme.gradient}`} />
-          <p className={`${theme.scriptFont} ${theme.accent} text-sm tracking-[0.4em] uppercase mb-4`}>With Love</p>
-          <h2 className={`${theme.headingFont} ${theme.text} text-4xl md:text-5xl mb-4`}>{names}</h2>
-          <p className={`${theme.bodyFont} ${theme.textSecondary} text-sm leading-relaxed max-w-xs mx-auto`}>
-            {content.closingMessage || "Thank you for being part of our journey. We can't wait to celebrate with you."}
+      {/* ═══════════════════════════════════════
+          9. CLOSING — Emotional farewell
+      ═══════════════════════════════════════ */}
+      <section className={`py-28 md:py-40 px-6 ${theme.bg} text-center relative overflow-hidden`}>
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <motion.div
+            animate={{ scale: [0.9, 1.1, 0.9], opacity: [0.03, 0.06, 0.03] }}
+            transition={{ repeat: Infinity, duration: 8, ease: "easeInOut" }}
+            className={`w-96 h-96 rounded-full bg-gradient-to-r ${theme.gradient} blur-3xl`}
+          />
+        </div>
+
+        <FadeSection className="relative z-10">
+          <Ornament theme={theme} className="mb-8" />
+          <p className={`${theme.scriptFont} ${theme.accent} text-xs tracking-[0.5em] uppercase mb-6`}>
+            With Love &amp; Joy
           </p>
-          <div className={`mt-8`}>
-            <Heart className={`w-6 h-6 mx-auto ${theme.accent} animate-float`} />
-          </div>
-          <p className={`${theme.bodyFont} ${theme.textSecondary} text-xs mt-8 opacity-60`}>
-            {details.weddingDate ? new Date(details.weddingDate + "T12:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) : ""}
+          <h2 className={`${theme.headingFont} ${theme.text} text-4xl md:text-6xl mb-5 tracking-tight`}>{names}</h2>
+          <p className={`${theme.bodyFont} ${theme.textSecondary} text-sm leading-relaxed max-w-xs mx-auto opacity-80`}>
+            {content.closingMessage || "Thank you for being part of our journey. We cannot wait to celebrate this beautiful chapter with you."}
           </p>
-        </motion.div>
+          <motion.div
+            className="mt-10"
+            animate={{ y: [0, -6, 0] }}
+            transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
+          >
+            <Heart className={`w-6 h-6 mx-auto ${theme.accent}`} />
+          </motion.div>
+          {details.weddingDate && (
+            <p className={`${theme.bodyFont} ${theme.textSecondary} text-xs mt-10 opacity-40 tracking-widest uppercase`}>
+              {formatWeddingDate(details.weddingDate)}
+            </p>
+          )}
+        </FadeSection>
       </section>
     </div>
   );
 }
 
 function DetailCard({ icon: Icon, title, value, link, theme }: { icon: any; title: string; value: string; link?: string; theme: ThemeConfig }) {
-  const content = (
-    <div className={`${theme.glass} rounded-xl p-4 text-center h-full`}>
-      <Icon className={`w-6 h-6 ${theme.accent} mx-auto mb-2`} />
-      <p className={`${theme.bodyFont} ${theme.accent} text-[10px] tracking-[0.2em] uppercase mb-1`}>{title}</p>
+  const inner = (
+    <div className={`${theme.glass} rounded-2xl p-5 text-center h-full shadow-sm`}>
+      <div className={`w-10 h-10 rounded-full mx-auto mb-3 flex items-center justify-center ${theme.cardBg}`}>
+        <Icon className={`w-5 h-5 ${theme.accent}`} />
+      </div>
+      <p className={`${theme.scriptFont} ${theme.accent} text-[9px] tracking-[0.3em] uppercase mb-1.5`}>{title}</p>
       <p className={`${theme.bodyFont} ${theme.text} text-sm`}>{value}</p>
     </div>
   );
 
   if (link) {
-    return <a href={link} target="_blank" rel="noopener noreferrer" data-testid={`link-${title.toLowerCase()}`}>{content}</a>;
+    return <a href={link} target="_blank" rel="noopener noreferrer" data-testid={`link-${title.toLowerCase().replace(/\s/g, "-")}`}>{inner}</a>;
   }
-  return content;
+  return inner;
 }

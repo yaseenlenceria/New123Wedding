@@ -138,36 +138,62 @@ export default function DashboardPage() {
   );
 }
 
+function TemplateMiniPreview({ theme }: { theme: ThemeConfig }) {
+  return (
+    <div className={`w-full h-full ${theme.bg} rounded-xl p-4 flex flex-col items-center justify-center text-center`}>
+      <p className={`${theme.scriptFont} ${theme.accent} text-[8px] tracking-[0.3em] uppercase mb-1 opacity-70`}>Together With Their Families</p>
+      <p className={`${theme.headingFont} ${theme.text} text-sm leading-tight`}>Emma</p>
+      <p className={`${theme.scriptFont} ${theme.accent} text-[10px] my-0.5`}>&amp;</p>
+      <p className={`${theme.headingFont} ${theme.text} text-sm leading-tight`}>Lucas</p>
+      <div className={`w-6 h-px mt-2 bg-gradient-to-r ${theme.gradient}`} />
+      <p className={`${theme.textSecondary} text-[7px] mt-1.5 font-body`}>June 22, 2027</p>
+    </div>
+  );
+}
+
 function StepChooseStyle({ selected, onSelect }: { selected?: TemplateName; onSelect: (t: TemplateName) => void }) {
   const templateList = Object.values(themes);
 
   return (
-    <motion.div initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} transition={{ duration: 0.4 }}>
+    <motion.div initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} transition={{ duration: 0.5 }}>
       <div className="text-center mb-8">
         <h2 className="font-display text-3xl text-[#2a2520] mb-2">Choose Your Style</h2>
         <p className="font-body text-[#8a7a68]">Each theme tells your story differently</p>
       </div>
-      <div className="grid gap-4">
-        {templateList.map((theme) => (
-          <button
+      <div className="grid grid-cols-1 gap-4">
+        {templateList.map((theme, i) => (
+          <motion.button
             key={theme.id}
             data-testid={`button-template-${theme.id}`}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.08, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             onClick={() => onSelect(theme.id)}
-            className={`relative overflow-visible rounded-2xl p-6 text-left transition-all duration-300 hover-elevate ${
-              selected === theme.id ? "ring-2 ring-[#c9a94e]" : ""
+            className={`relative overflow-hidden rounded-2xl text-left transition-all duration-500 group ${
+              selected === theme.id ? "ring-2 ring-[#c9a94e] shadow-lg" : "shadow-sm"
             }`}
           >
-            <div className={`absolute inset-0 rounded-2xl ${theme.bg}`} />
-            <div className="relative z-10 flex items-center gap-4">
-              <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${theme.buttonBg}`}>
-                <Heart className={`w-6 h-6 ${theme.buttonText}`} />
+            <div className={`absolute inset-0 ${theme.bg}`} />
+            <div className="relative z-10 flex items-center gap-4 p-4">
+              <div className="w-24 h-28 flex-shrink-0 rounded-xl overflow-hidden border border-white/10 shadow-inner transition-transform duration-500 group-hover:scale-105">
+                <TemplateMiniPreview theme={theme} />
               </div>
-              <div>
-                <h3 className={`text-lg font-display ${theme.text}`}>{theme.name}</h3>
-                <p className={`text-sm font-body ${theme.textSecondary}`}>{theme.tagline}</p>
+              <div className="flex-1 min-w-0">
+                <h3 className={`text-base font-display ${theme.text} mb-0.5`}>{theme.name}</h3>
+                <p className={`text-xs font-body ${theme.textSecondary} mb-2`}>{theme.tagline}</p>
+                <div className="flex gap-1.5">
+                  <div className={`w-4 h-4 rounded-full ${theme.buttonBg} shadow-sm`} />
+                  <div className={`w-4 h-4 rounded-full ${theme.bg} border ${theme.glassBorder}`} />
+                  <div className={`w-4 h-4 rounded-full ${theme.bgSecondary}`} />
+                </div>
+              </div>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
+                selected === theme.id ? `${theme.buttonBg}` : "bg-white/20"
+              }`}>
+                <Heart className={`w-3.5 h-3.5 ${selected === theme.id ? theme.buttonText : theme.textSecondary}`} />
               </div>
             </div>
-          </button>
+          </motion.button>
         ))}
       </div>
     </motion.div>
