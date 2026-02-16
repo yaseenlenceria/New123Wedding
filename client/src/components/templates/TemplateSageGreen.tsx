@@ -1,110 +1,269 @@
-import { motion } from "framer-motion";
+import { useState, useRef } from "react";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { MapPin, Heart, Shirt, Bus, Hotel, Gift, ChevronDown } from "lucide-react";
+import {
+  EnvelopeOpening, FloatingRing, Particles, Countdown, MusicButton,
+  FadeSection, StaggerChildren, staggerItem, LetterByLetter, SectionHeading,
+  Ornament, RsvpSection, ClosingSection, DetailCard, formatWeddingDate, getEventIcon,
+  type TemplateProps,
+} from "./shared";
 
-interface Props {
-  details: any;
-  content: any;
-}
+import sageHeroImg from "@/assets/images/sage-hero.jpg";
+import sageCoupleImg from "@/assets/images/sage-couple.jpg";
+import sageBotanicalImg from "@/assets/images/sage-botanical.jpg";
+import venueImg from "@/assets/images/venue.jpg";
 
-export function TemplateSageGreen({ details, content }: Props) {
+export default function TemplateSageGreen({ order, theme }: TemplateProps) {
+  const [envelopeOpen, setEnvelopeOpen] = useState(false);
+  const heroRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+  const heroScale = useTransform(scrollYProgress, [0, 0.8], [1, 0.96]);
+  const heroImgY = useTransform(scrollYProgress, [0, 1], [0, 80]);
+  const { scrollYProgress: pageProgress } = useScroll();
+
+  const details = order.weddingDetails || {} as any;
+  const content = order.generatedContent || {} as any;
+  const names = details.coupleNames || "Couple";
+  const nameParts = names.split(/\s*[&]\s*/);
+  const welcomeMsg = typeof content.welcomeMessage === "object"
+    ? (content.welcomeMessage as any).title || ""
+    : content.welcomeMessage || "";
+
   return (
-    <div className="font-serif text-[#2C3E2D] bg-[#F7F9F7]">
-      {/* Hero Section */}
-      <section className="min-h-screen flex flex-col items-center justify-center text-center p-8 relative overflow-hidden">
-        {/* Decorative elements */}
-        <div className="absolute top-0 left-0 w-64 h-64 opacity-20 bg-[url('https://pixabay.com/get/g3ab22e5ab9f84983e7710874ca8e404b0845b68c3f43ae9b0491d23c32f3fb190c759e25262319bad1a10a0de7f0e29550ecb9ff0e177d3c15ba167a15a24aef_1280.png')] bg-no-repeat bg-contain" />
-        <div className="absolute bottom-0 right-0 w-64 h-64 opacity-20 bg-[url('https://pixabay.com/get/g3ab22e5ab9f84983e7710874ca8e404b0845b68c3f43ae9b0491d23c32f3fb190c759e25262319bad1a10a0de7f0e29550ecb9ff0e177d3c15ba167a15a24aef_1280.png')] bg-no-repeat bg-contain rotate-180" />
-        
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="z-10 space-y-6"
-        >
-          <p className="text-lg tracking-[0.2em] uppercase text-[#6B8E6D]">We are getting married</p>
-          <h1 className="text-6xl md:text-8xl font-display text-[#2C3E2D]">{details?.coupleNames}</h1>
-          <div className="h-px w-24 bg-[#6B8E6D] mx-auto my-6" />
-          <p className="text-xl md:text-2xl">{new Date(details?.weddingDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
-          <p className="text-lg uppercase tracking-widest">{details?.venue}</p>
-        </motion.div>
-      </section>
+    <div className={`min-h-screen ${theme.bg} overflow-x-hidden selection:bg-current/10`} data-testid="template-sage-green">
+      <AnimatePresence>
+        {!envelopeOpen && <EnvelopeOpening theme={theme} onOpen={() => setEnvelopeOpen(true)} />}
+      </AnimatePresence>
+      {envelopeOpen && <FloatingRing theme={theme} scrollProgress={pageProgress} />}
+      <MusicButton musicLink={details.musicLink} theme={theme} envelopeOpen={envelopeOpen} />
 
-      {/* Our Story */}
-      <section className="py-24 px-6 md:px-12 bg-white">
-        <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-12 items-center">
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
+      <motion.section
+        ref={heroRef}
+        style={{ opacity: heroOpacity, scale: heroScale }}
+        className="min-h-screen relative flex flex-col items-center justify-center overflow-hidden"
+        data-testid="section-hero"
+      >
+        <motion.div className="absolute inset-0 z-0" style={{ y: heroImgY }}>
+          <img src={sageHeroImg} alt="" className="w-full h-full object-cover" data-testid="img-hero" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#2d3a1e]/70 via-[#2d3a1e]/50 to-[#f7f3eb]" />
+        </motion.div>
+        <Particles color={theme.particleColor} count={10} />
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={envelopeOpen ? { opacity: 1, scale: 1 } : {}}
+          transition={{ delay: 0.3, duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
+          className="text-center max-w-xl mx-auto relative z-10 px-6"
+        >
+          <motion.p
+            initial={{ opacity: 0, y: 30 }}
+            animate={envelopeOpen ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.5, duration: 1 }}
+            className={`${theme.scriptFont} text-white/80 text-xs md:text-sm tracking-[0.5em] uppercase mb-8`}
           >
-             {/* Unsplash: Couple hands */}
-            <img 
-              src="https://images.unsplash.com/photo-1621621667797-e06afc217fb0?auto=format&fit=crop&q=80&w=800" 
-              alt="Couple" 
-              className="rounded-t-full w-full object-cover h-[500px]"
-            />
-          </motion.div>
+            Together With Their Families
+          </motion.p>
+          <h1 className={`${theme.headingFont} text-white text-6xl md:text-8xl leading-none tracking-tight`} data-testid="text-couple-names">
+            {envelopeOpen && <LetterByLetter text={nameParts[0]?.trim() || ""} delay={1} />}
+          </h1>
           <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="space-y-6"
+            initial={{ scaleX: 0 }}
+            animate={envelopeOpen ? { scaleX: 1 } : {}}
+            transition={{ delay: 1.5, duration: 0.8 }}
+            className="flex items-center justify-center gap-4 my-4"
           >
-            <h2 className="text-4xl font-display text-[#2C3E2D]">Our Story</h2>
-            <div className="prose prose-lg text-[#4A5D4B]">
-              {content?.ourStory ? (
-                content.ourStory.split('\n').map((p: string, i: number) => <p key={i}>{p}</p>)
-              ) : (
-                <p>Loading our story...</p>
-              )}
-            </div>
+            <div className="h-px w-16 bg-gradient-to-r from-transparent to-white/40" />
+            <span className={`${theme.scriptFont} text-white/70 text-3xl`}>&amp;</span>
+            <div className="h-px w-16 bg-gradient-to-l from-transparent to-white/40" />
           </motion.div>
+          <h1 className={`${theme.headingFont} text-white text-6xl md:text-8xl leading-none tracking-tight`} data-testid="text-couple-names">
+            {envelopeOpen && <LetterByLetter text={nameParts[1]?.trim() || "Partner"} delay={1.6} />}
+          </h1>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={envelopeOpen ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 2.2, duration: 1 }}
+            className="mt-10 space-y-2"
+          >
+            <p className={`${theme.bodyFont} text-white/70 text-base md:text-lg tracking-wider`} data-testid="text-wedding-date">
+              {details.weddingDate ? formatWeddingDate(details.weddingDate) : "Date To Be Announced"}
+            </p>
+            <p className={`${theme.bodyFont} text-white/50 text-sm`}>{details.venue}</p>
+          </motion.div>
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={envelopeOpen ? { opacity: 1 } : {}}
+          transition={{ delay: 3, duration: 1 }}
+          className="absolute bottom-10 z-10"
+        >
+          <ChevronDown className="w-5 h-5 text-white/40 animate-scroll-hint" />
+        </motion.div>
+      </motion.section>
+
+      <section className={`py-24 md:py-32 px-6 ${theme.bg}`} data-testid="section-countdown">
+        <div className="max-w-lg mx-auto text-center">
+          <FadeSection>
+            <p className={`${theme.scriptFont} ${theme.accent} text-xs tracking-[0.4em] uppercase mb-4`}>Counting Down To</p>
+            <h2 className={`${theme.headingFont} ${theme.text} text-3xl md:text-4xl mb-2`}>Forever Begins</h2>
+            <Ornament theme={theme} className="mb-10" />
+          </FadeSection>
+          <FadeSection delay={0.2}>
+            <Countdown targetDate={details.weddingDate || "2027-12-31"} theme={theme} />
+          </FadeSection>
+          {welcomeMsg && (
+            <FadeSection delay={0.4}>
+              <p className={`${theme.bodyFont} ${theme.textSecondary} mt-10 text-sm md:text-base leading-relaxed italic max-w-sm mx-auto`}>
+                &ldquo;{welcomeMsg}&rdquo;
+              </p>
+            </FadeSection>
+          )}
         </div>
       </section>
 
-      {/* Schedule/Details */}
-      <section className="py-24 px-6 bg-[#6B8E6D] text-white text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          className="max-w-3xl mx-auto space-y-8"
-        >
-          <h2 className="text-4xl font-display">The Details</h2>
-          <div className="grid md:grid-cols-3 gap-8 text-center">
-            <div className="p-6 border border-white/20 rounded-lg backdrop-blur-sm">
-              <h3 className="text-xl font-bold mb-2">Ceremony</h3>
-              <p>4:00 PM</p>
-              <p className="text-sm opacity-80 mt-2">{details?.venue}</p>
-            </div>
-            <div className="p-6 border border-white/20 rounded-lg backdrop-blur-sm">
-              <h3 className="text-xl font-bold mb-2">Cocktails</h3>
-              <p>5:00 PM</p>
-              <p className="text-sm opacity-80 mt-2">Garden Terrace</p>
-            </div>
-            <div className="p-6 border border-white/20 rounded-lg backdrop-blur-sm">
-              <h3 className="text-xl font-bold mb-2">Reception</h3>
-              <p>6:30 PM</p>
-              <p className="text-sm opacity-80 mt-2">Grand Ballroom</p>
-            </div>
+      {content.ourStory && (
+        <section className={`py-20 md:py-28 px-6 ${theme.bgSecondary} relative`} data-testid="section-story">
+          <div className="max-w-5xl mx-auto">
+            <SectionHeading title="Our Story" subtitle="A Love Letter" theme={theme} />
+            <FadeSection delay={0.15}>
+              <div className="grid md:grid-cols-2 gap-8 items-center">
+                <div className="relative rounded-3xl overflow-hidden aspect-[3/4]">
+                  <img src={sageCoupleImg} alt="Our love story" className="w-full h-full object-cover" data-testid="img-couple" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#2d3a1e]/40 to-transparent" />
+                </div>
+                <div className={`${theme.glass} rounded-3xl p-8 md:p-10`}>
+                  <Heart className={`w-8 h-8 ${theme.accent} opacity-30 mb-6`} />
+                  <p className={`${theme.bodyFont} ${theme.textSecondary} text-sm md:text-base leading-[2] whitespace-pre-line`}>
+                    {content.ourStory}
+                  </p>
+                </div>
+              </div>
+            </FadeSection>
           </div>
-          {details?.dressCode && (
-            <div className="mt-8">
-              <p className="uppercase tracking-widest text-sm">Dress Code</p>
-              <p className="text-xl mt-2">{details.dressCode}</p>
-            </div>
-          )}
-        </motion.div>
+        </section>
+      )}
+
+      <section className="relative overflow-hidden">
+        <div className="relative h-[50vh] md:h-[60vh]">
+          <img src={sageBotanicalImg} alt="Botanical details" className="w-full h-full object-cover" data-testid="img-botanical" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#f7f3eb]/80 via-transparent to-[#eee8da]/80" />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <FadeSection className="text-center px-6">
+              <p className={`${theme.scriptFont} ${theme.accent} text-sm tracking-[0.4em] uppercase mb-3`}>
+                {details.weddingDate ? formatWeddingDate(details.weddingDate) : ""}
+              </p>
+              <h2 className={`${theme.headingFont} ${theme.text} text-4xl md:text-6xl`}>Save the Date</h2>
+            </FadeSection>
+          </div>
+        </div>
       </section>
 
-      {/* RSVP */}
-      <section className="py-24 px-6 text-center">
-        <h2 className="text-4xl font-display mb-8">RSVP</h2>
-        <p className="text-lg text-[#4A5D4B] max-w-2xl mx-auto mb-12">
-          {content?.rsvpMessage || "We can't wait to celebrate with you! Please let us know if you can make it."}
-        </p>
-        <button className="bg-[#2C3E2D] text-white px-12 py-4 rounded-full text-lg tracking-widest hover:bg-[#1A251B] transition-colors duration-300">
-          RSVP ONLINE
-        </button>
+      <section className={`py-24 md:py-32 px-6 ${theme.bgSecondary}`} data-testid="section-venue">
+        <div className="max-w-5xl mx-auto">
+          <SectionHeading title={details.venue || "The Venue"} subtitle="Celebrate With Us" theme={theme} />
+          <FadeSection delay={0.15}>
+            <div className="grid md:grid-cols-5 gap-6">
+              <div className="md:col-span-3 rounded-3xl overflow-hidden aspect-video relative">
+                <img src={venueImg} alt={details.venue} className="w-full h-full object-cover" data-testid="img-venue" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#2d3a1e]/30 to-transparent" />
+                {details.googleMapsUrl && (
+                  <a
+                    href={details.googleMapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`absolute bottom-5 left-5 inline-flex items-center gap-2 px-5 py-2.5 rounded-full ${theme.buttonBg} ${theme.buttonText} text-xs ${theme.bodyFont} tracking-widest uppercase shadow-lg`}
+                    data-testid="link-maps-venue"
+                  >
+                    <MapPin className="w-3.5 h-3.5" /> Open in Maps
+                  </a>
+                )}
+              </div>
+              <div className="md:col-span-2 flex flex-col justify-center space-y-6">
+                {details.venueAddress && (
+                  <div className={`${theme.glass} rounded-2xl p-6`}>
+                    <p className={`${theme.scriptFont} ${theme.accent} text-[10px] tracking-[0.3em] uppercase mb-2`}>Address</p>
+                    <p className={`${theme.bodyFont} ${theme.text} text-sm`}>{details.venueAddress}</p>
+                  </div>
+                )}
+                {content.venueDetails && (
+                  <div className={`${theme.glass} rounded-2xl p-6`}>
+                    <p className={`${theme.bodyFont} ${theme.textSecondary} text-sm leading-relaxed`}>{content.venueDetails}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </FadeSection>
+        </div>
       </section>
+
+      {details.agenda && details.agenda.length > 0 && (
+        <section className={`py-24 md:py-32 px-6 ${theme.bg}`} data-testid="section-schedule">
+          <div className="max-w-lg mx-auto">
+            <SectionHeading title="The Day" subtitle="Schedule" theme={theme} />
+            {content.agendaIntro && (
+              <FadeSection>
+                <p className={`${theme.bodyFont} ${theme.textSecondary} text-center text-sm mb-10 opacity-80`}>{content.agendaIntro}</p>
+              </FadeSection>
+            )}
+            <div className="relative">
+              <div className={`absolute left-[23px] top-4 bottom-4 w-px ${theme.timelineLine}`} />
+              <StaggerChildren className="space-y-5">
+                {details.agenda.map((item: { time: string; event: string }, i: number) => {
+                  const Icon = getEventIcon(item.event);
+                  return (
+                    <motion.div key={i} variants={staggerItem} className="flex items-start gap-5" data-testid={`timeline-item-${i}`}>
+                      <div className={`relative z-10 w-12 h-12 rounded-full ${theme.glass} flex items-center justify-center flex-shrink-0 shadow-sm`}>
+                        <Icon className={`w-5 h-5 ${theme.accent}`} />
+                      </div>
+                      <div className={`flex-1 ${theme.glass} rounded-2xl p-5 shadow-sm`}>
+                        <p className={`${theme.scriptFont} ${theme.accent} text-[10px] tracking-[0.3em] uppercase mb-1`}>{item.time}</p>
+                        <p className={`${theme.headingFont} ${theme.text} text-lg`}>{item.event}</p>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </StaggerChildren>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {(details.dressCode || details.transportation || details.accommodation || details.registryLinks) && (
+        <section className={`py-24 md:py-32 px-6 ${theme.bgSecondary}`} data-testid="section-details">
+          <div className="max-w-lg mx-auto">
+            <SectionHeading title="Details" subtitle="Good to Know" theme={theme} />
+            <StaggerChildren className="grid grid-cols-2 gap-4">
+              {details.dressCode && <motion.div variants={staggerItem}><DetailCard icon={Shirt} title="Dress Code" value={details.dressCode} theme={theme} /></motion.div>}
+              {details.transportation && <motion.div variants={staggerItem}><DetailCard icon={Bus} title="Transportation" value={details.transportation} theme={theme} /></motion.div>}
+              {details.accommodation && <motion.div variants={staggerItem}><DetailCard icon={Hotel} title="Accommodation" value={details.accommodation} theme={theme} /></motion.div>}
+              {details.registryLinks && <motion.div variants={staggerItem}><DetailCard icon={Gift} title="Registry" value="View Registry" link={details.registryLinks} theme={theme} /></motion.div>}
+            </StaggerChildren>
+          </div>
+        </section>
+      )}
+
+      <section className={`py-24 md:py-32 px-6 ${theme.bg} relative`} data-testid="section-gallery">
+        <Particles color={theme.particleColor} count={6} />
+        <div className="max-w-5xl mx-auto relative z-10">
+          <SectionHeading title="Gallery" subtitle="Captured Moments" theme={theme} />
+          <StaggerChildren className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {[sageHeroImg, sageCoupleImg, sageBotanicalImg, venueImg].map((img, i) => (
+              <motion.div
+                key={i}
+                variants={staggerItem}
+                className={`${i === 0 ? "md:col-span-2 md:row-span-2 aspect-square" : "aspect-square"} rounded-2xl overflow-hidden relative group`}
+                data-testid={`gallery-item-${i}`}
+              >
+                <img src={img} alt={`Gallery ${i + 1}`} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                <div className="absolute inset-0 bg-[#2d3a1e]/10 group-hover:bg-[#2d3a1e]/0 transition-colors duration-500" />
+              </motion.div>
+            ))}
+          </StaggerChildren>
+        </div>
+      </section>
+
+      <RsvpSection theme={theme} content={content} details={details} />
+      <ClosingSection theme={theme} content={content} details={details} />
     </div>
   );
 }
