@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import type { ReactNode } from "react";
 import { motion, useInView, useScroll, useTransform, useSpring, AnimatePresence } from "framer-motion";
-import { MapPin, Clock, ChevronDown, Music, Pause, Heart, Shirt, Bus, Hotel, Gift, UtensilsCrossed, PartyPopper, Church, GlassWater, Send, Sparkles } from "lucide-react";
+import { MapPin, Clock, ChevronDown, Pause, Heart, Shirt, Bus, Hotel, Gift, UtensilsCrossed, PartyPopper, Church, GlassWater, Send, Sparkles, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { type ThemeConfig } from "@/lib/themes";
@@ -10,7 +11,7 @@ function Ornament({ theme, className = "" }: { theme: ThemeConfig; className?: s
   return (
     <div className={`flex items-center justify-center gap-3 ${className}`}>
       <div className={`h-px w-12 bg-gradient-to-r from-transparent ${theme.gradient}`} />
-      <svg width="16" height="16" viewBox="0 0 16 16" className={`${theme.accent} opacity-40`}>
+      <svg width="14" height="14" viewBox="0 0 16 16" className={`${theme.accent} opacity-40`}>
         <path d="M8 0L9.8 6.2L16 8L9.8 9.8L8 16L6.2 9.8L0 8L6.2 6.2Z" fill="currentColor" />
       </svg>
       <div className={`h-px w-12 bg-gradient-to-l from-transparent ${theme.gradient}`} />
@@ -18,7 +19,7 @@ function Ornament({ theme, className = "" }: { theme: ThemeConfig; className?: s
   );
 }
 
-function FadeSection({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
+function FadeSection({ children, className = "", delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-60px" });
   return (
@@ -34,7 +35,7 @@ function FadeSection({ children, className = "", delay = 0 }: { children: React.
   );
 }
 
-function StaggerChildren({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+function StaggerChildren({ children, className = "" }: { children: ReactNode; className?: string }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-40px" });
   return (
@@ -55,29 +56,56 @@ const staggerItem = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
 };
 
-function ParallaxSection({ children, className = "", speed = 0.15 }: { children: React.ReactNode; className?: string; speed?: number }) {
-  const ref = useRef(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const y = useTransform(scrollYProgress, [0, 1], [60 * speed, -60 * speed]);
-  const smoothY = useSpring(y, { stiffness: 100, damping: 30 });
+function LetterByLetter({ text, className = "", delay = 0 }: { text: string; className?: string; delay?: number }) {
   return (
-    <motion.section ref={ref} style={{ y: smoothY }} className={className}>
-      {children}
-    </motion.section>
+    <span className={className} aria-label={text}>
+      {text.split("").map((char, i) => (
+        <motion.span
+          key={i}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: delay + i * 0.05, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="inline-block"
+          style={{ whiteSpace: char === " " ? "pre" : undefined }}
+        >
+          {char === " " ? "\u00A0" : char}
+        </motion.span>
+      ))}
+    </span>
   );
 }
 
 function SectionHeading({ title, subtitle, theme }: { title: string; subtitle?: string; theme: ThemeConfig }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-60px" });
   return (
-    <FadeSection className="text-center mb-10">
+    <div ref={ref} className="text-center mb-10">
       {subtitle && (
-        <p className={`${theme.scriptFont} ${theme.accent} text-xs tracking-[0.4em] uppercase mb-3 opacity-80`}>
+        <motion.p
+          initial={{ opacity: 0, y: 15 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          className={`${theme.scriptFont} ${theme.accent} text-xs tracking-[0.4em] uppercase mb-3 opacity-80`}
+        >
           {subtitle}
-        </p>
+        </motion.p>
       )}
-      <h2 className={`${theme.headingFont} ${theme.text} text-3xl md:text-5xl leading-snug`}>{title}</h2>
-      <Ornament theme={theme} className="mt-5" />
-    </FadeSection>
+      <motion.h2
+        initial={{ opacity: 0, y: 20 }}
+        animate={inView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.9, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+        className={`${theme.headingFont} ${theme.text} text-3xl md:text-5xl leading-snug`}
+      >
+        {title}
+      </motion.h2>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={inView ? { opacity: 1 } : {}}
+        transition={{ delay: 0.3, duration: 0.6 }}
+      >
+        <Ornament theme={theme} className="mt-5" />
+      </motion.div>
+    </div>
   );
 }
 
@@ -157,13 +185,204 @@ function formatWeddingDate(dateStr: string) {
   } catch { return dateStr; }
 }
 
+function Particles({ color, count = 20 }: { color: string; count?: number }) {
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      {Array.from({ length: count }).map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute rounded-full"
+          style={{
+            width: Math.random() * 3 + 1,
+            height: Math.random() * 3 + 1,
+            backgroundColor: color,
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+            opacity: Math.random() * 0.3 + 0.05,
+          }}
+          animate={{
+            y: [0, -(Math.random() * 80 + 30)],
+            x: [0, (Math.random() - 0.5) * 40],
+            opacity: [Math.random() * 0.2 + 0.05, 0],
+          }}
+          transition={{
+            duration: Math.random() * 6 + 4,
+            repeat: Infinity,
+            delay: Math.random() * 5,
+            ease: "easeOut",
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function FloatingRing({ theme, scrollProgress }: { theme: ThemeConfig; scrollProgress: any }) {
+  const x = useTransform(scrollProgress, [0, 0.2, 0.4, 0.6, 0.8, 1], [0, 30, -20, 25, -15, 0]);
+  const y = useTransform(scrollProgress, [0, 1], [0, -60]);
+  const rotate = useTransform(scrollProgress, [0, 1], [0, 25]);
+  const smoothX = useSpring(x, { stiffness: 40, damping: 25 });
+  const smoothY = useSpring(y, { stiffness: 40, damping: 25 });
+  const smoothRotate = useSpring(rotate, { stiffness: 40, damping: 25 });
+
+  return (
+    <motion.div
+      className="fixed z-40 pointer-events-none"
+      style={{
+        right: "5%",
+        top: "40%",
+        x: smoothX,
+        y: smoothY,
+        rotate: smoothRotate,
+      }}
+    >
+      <svg width="50" height="50" viewBox="0 0 60 60" className="opacity-[0.12] md:opacity-[0.15]" style={{ filter: "blur(0.5px)" }}>
+        <circle cx="30" cy="30" r="22" fill="none" stroke={theme.ringColor} strokeWidth="3" />
+        <circle cx="30" cy="30" r="18" fill="none" stroke={theme.ringColor} strokeWidth="1" opacity="0.4" />
+        <circle cx="30" cy="12" r="3" fill={theme.ringColor} opacity="0.6" />
+      </svg>
+    </motion.div>
+  );
+}
+
+function EnvelopeOpening({ theme, onOpen }: { theme: ThemeConfig; onOpen: () => void }) {
+  const [phase, setPhase] = useState<"sealed" | "cracking" | "opening" | "done">("sealed");
+
+  const handleOpen = useCallback(() => {
+    if (phase !== "sealed") return;
+    setPhase("cracking");
+    setTimeout(() => setPhase("opening"), 800);
+    setTimeout(() => {
+      setPhase("done");
+      onOpen();
+    }, 2200);
+  }, [phase, onOpen]);
+
+  useEffect(() => {
+    const handler = () => handleOpen();
+    window.addEventListener("scroll", handler, { once: true, passive: true });
+    return () => window.removeEventListener("scroll", handler);
+  }, [handleOpen]);
+
+  if (phase === "done") return null;
+
+  return (
+    <motion.div
+      className={`fixed inset-0 z-[100] flex items-center justify-center ${theme.bg}`}
+      animate={phase === "opening" ? { opacity: 0 } : { opacity: 1 }}
+      transition={{ duration: 1, delay: phase === "opening" ? 0.8 : 0 }}
+      style={{ cursor: phase === "sealed" ? "pointer" : "default", pointerEvents: phase === "opening" ? "none" : "auto" }}
+      onClick={handleOpen}
+      data-testid="envelope-overlay"
+    >
+      <Particles color={theme.particleColor} count={15} />
+
+      <div className="relative">
+        <motion.div
+          className="relative w-72 h-48 md:w-96 md:h-64 rounded-md overflow-visible"
+          style={{ perspective: "800px" }}
+        >
+          <div
+            className="absolute inset-0 rounded-md shadow-2xl"
+            style={{ backgroundColor: theme.envelopeBg, border: `1px solid ${theme.ringColor}20` }}
+          />
+
+          <div className="absolute inset-0 flex items-center justify-center z-10">
+            <div className="text-center px-8">
+              <p className={`${theme.scriptFont} ${theme.accent} text-xs tracking-[0.4em] uppercase mb-2 opacity-70`}>You are invited</p>
+              <p className={`${theme.headingFont} ${theme.text} text-xl md:text-2xl`}>Open to reveal</p>
+            </div>
+          </div>
+
+          <motion.div
+            className="absolute -top-[1px] left-0 right-0 origin-top"
+            style={{
+              height: "55%",
+              clipPath: "polygon(0 0, 50% 100%, 100% 0)",
+              backgroundColor: theme.envelopeFlap,
+              border: `1px solid ${theme.ringColor}15`,
+              transformStyle: "preserve-3d",
+            }}
+            animate={
+              phase === "cracking" ? { rotateX: -30 } :
+              phase === "opening" ? { rotateX: -180 } :
+              { rotateX: 0 }
+            }
+            transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+          />
+
+          <motion.div
+            className="absolute left-1/2 top-[30%] -translate-x-1/2 -translate-y-1/2 z-20"
+            animate={
+              phase === "cracking" ? { scale: [1, 1.15, 0.9], rotate: [0, 5, -3], opacity: [1, 1, 0.6] } :
+              phase === "opening" ? { scale: 0, opacity: 0, y: -40 } :
+              { scale: [1, 1.03, 1] }
+            }
+            transition={
+              phase === "sealed" ? { repeat: Infinity, duration: 3, ease: "easeInOut" } :
+              { duration: 0.8, ease: [0.22, 1, 0.36, 1] }
+            }
+          >
+            <div className="relative">
+              <svg width="56" height="56" viewBox="0 0 56 56">
+                <circle cx="28" cy="28" r="26" fill={theme.sealColor} opacity="0.9" />
+                <circle cx="28" cy="28" r="22" fill="none" stroke={theme.envelopeBg} strokeWidth="0.5" opacity="0.3" />
+                <circle cx="28" cy="28" r="13" fill="none" stroke={theme.envelopeBg} strokeWidth="1.5" opacity="0.25" />
+                <circle cx="22" cy="26" r="5" fill="none" stroke={theme.envelopeBg} strokeWidth="1.2" opacity="0.5" />
+                <circle cx="34" cy="26" r="5" fill="none" stroke={theme.envelopeBg} strokeWidth="1.2" opacity="0.5" />
+                <path d="M22 31 Q28 36 34 31" fill="none" stroke={theme.envelopeBg} strokeWidth="0.8" opacity="0.3" />
+              </svg>
+              {phase === "cracking" && (
+                <motion.div
+                  className="absolute inset-0"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                >
+                  <svg width="56" height="56" viewBox="0 0 56 56" className="absolute inset-0">
+                    <path d="M20 10 L24 20 L18 28 L26 34 L22 46" fill="none" stroke={theme.envelopeBg} strokeWidth="1.5" opacity="0.6" />
+                    <path d="M36 8 L32 18 L38 26 L30 32 L34 44" fill="none" stroke={theme.envelopeBg} strokeWidth="1" opacity="0.4" />
+                  </svg>
+                </motion.div>
+              )}
+            </div>
+          </motion.div>
+        </motion.div>
+
+        <motion.div
+          className="absolute -bottom-1 left-1/2 -translate-x-1/2"
+          animate={phase === "opening" ? { opacity: 1, scale: 1.5 } : { opacity: 0 }}
+          transition={{ duration: 1.2 }}
+        >
+          <div
+            className="w-40 h-40 rounded-full blur-3xl"
+            style={{ backgroundColor: theme.ringColor, opacity: 0.2 }}
+          />
+        </motion.div>
+      </div>
+
+      <motion.p
+        className={`absolute bottom-16 ${theme.bodyFont} ${theme.textSecondary} text-xs tracking-[0.3em] uppercase`}
+        animate={{ opacity: [0.3, 0.8, 0.3] }}
+        transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
+      >
+        {phase === "sealed" ? "Tap or scroll to open" : ""}
+      </motion.p>
+    </motion.div>
+  );
+}
+
 export default function WeddingTemplate({ order, theme }: { order: Order; theme: ThemeConfig }) {
   const [musicPlaying, setMusicPlaying] = useState(false);
   const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
+  const [envelopeOpen, setEnvelopeOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
+
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
   const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
-  const heroScale = useTransform(scrollYProgress, [0, 0.8], [1, 0.95]);
+  const heroScale = useTransform(scrollYProgress, [0, 0.8], [1, 0.96]);
+
+  const { scrollYProgress: pageProgress } = useScroll();
 
   const details = order.weddingDetails || {} as any;
   const content = order.generatedContent || {} as any;
@@ -174,33 +393,45 @@ export default function WeddingTemplate({ order, theme }: { order: Order; theme:
     : content.welcomeMessage || "";
 
   return (
-    <div className={`min-h-screen ${theme.bg} overflow-x-hidden selection:bg-current/10`}>
-      {details.musicLink && (
+    <div ref={containerRef} className={`min-h-screen ${theme.bg} overflow-x-hidden selection:bg-current/10`}>
+      <AnimatePresence>
+        {!envelopeOpen && (
+          <EnvelopeOpening theme={theme} onOpen={() => setEnvelopeOpen(true)} />
+        )}
+      </AnimatePresence>
+
+      {envelopeOpen && <FloatingRing theme={theme} scrollProgress={pageProgress} />}
+
+      {details.musicLink && envelopeOpen && (
         <motion.button
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 2, type: "spring" }}
+          transition={{ delay: 0.5, type: "spring" }}
           onClick={() => setMusicPlaying(!musicPlaying)}
           className={`fixed top-5 right-5 z-50 w-11 h-11 rounded-full ${theme.glass} flex items-center justify-center shadow-lg`}
           data-testid="button-music"
         >
-          {musicPlaying ? <Pause className={`w-4 h-4 ${theme.accent}`} /> : <Music className={`w-4 h-4 ${theme.accent}`} />}
+          {musicPlaying ? <Pause className={`w-4 h-4 ${theme.accent}`} /> : <Volume2 className={`w-4 h-4 ${theme.accent}`} />}
         </motion.button>
       )}
 
-      {/* ═══════════════════════════════════════
-          1. HERO — Full-screen parallax fade
-      ═══════════════════════════════════════ */}
       <motion.section
         ref={heroRef}
         style={{ opacity: heroOpacity, scale: heroScale }}
         className={`min-h-screen flex flex-col items-center justify-center px-6 relative ${theme.bg}`}
       >
-        <div className="text-center max-w-xl mx-auto">
+        <Particles color={theme.particleColor} count={12} />
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={envelopeOpen ? { opacity: 1, scale: 1 } : {}}
+          transition={{ delay: 0.3, duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
+          className="text-center max-w-xl mx-auto relative z-10"
+        >
           <motion.p
             initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 1, ease: [0.22, 1, 0.36, 1] }}
+            animate={envelopeOpen ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.5, duration: 1, ease: [0.22, 1, 0.36, 1] }}
             className={`${theme.scriptFont} ${theme.accent} text-xs md:text-sm tracking-[0.5em] uppercase mb-8`}
           >
             Together With Their Families
@@ -208,16 +439,16 @@ export default function WeddingTemplate({ order, theme }: { order: Order; theme:
 
           <motion.div
             initial={{ opacity: 0, scale: 0.85 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.7, duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+            animate={envelopeOpen ? { opacity: 1, scale: 1 } : {}}
+            transition={{ delay: 0.8, duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
           >
             <h1 className={`${theme.headingFont} ${theme.text} text-6xl md:text-8xl leading-none tracking-tight`}>
-              {nameParts[0]?.trim()}
+              {envelopeOpen && <LetterByLetter text={nameParts[0]?.trim() || ""} delay={1} />}
             </h1>
             <motion.div
               initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ delay: 1.2, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+              animate={envelopeOpen ? { scaleX: 1 } : {}}
+              transition={{ delay: 1.5, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
               className="flex items-center justify-center gap-4 my-4"
             >
               <div className={`h-px w-16 bg-gradient-to-r from-transparent ${theme.gradient}`} />
@@ -225,14 +456,14 @@ export default function WeddingTemplate({ order, theme }: { order: Order; theme:
               <div className={`h-px w-16 bg-gradient-to-l from-transparent ${theme.gradient}`} />
             </motion.div>
             <h1 className={`${theme.headingFont} ${theme.text} text-6xl md:text-8xl leading-none tracking-tight`}>
-              {nameParts[1]?.trim() || "Partner"}
+              {envelopeOpen && <LetterByLetter text={nameParts[1]?.trim() || "Partner"} delay={1.6} />}
             </h1>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.5, duration: 1, ease: [0.22, 1, 0.36, 1] }}
+            animate={envelopeOpen ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 2.2, duration: 1, ease: [0.22, 1, 0.36, 1] }}
             className="mt-10 space-y-2"
           >
             <Ornament theme={theme} />
@@ -248,20 +479,20 @@ export default function WeddingTemplate({ order, theme }: { order: Order; theme:
               target="_blank"
               rel="noopener noreferrer"
               initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.8, duration: 0.8 }}
+              animate={envelopeOpen ? { opacity: 1, y: 0 } : {}}
+              transition={{ delay: 2.6, duration: 0.8 }}
               className={`inline-flex items-center gap-2 px-6 py-2.5 rounded-full ${theme.glass} ${theme.textSecondary} text-xs ${theme.bodyFont} tracking-widest uppercase mt-8`}
               data-testid="link-maps-hero"
             >
               <MapPin className="w-3.5 h-3.5" /> View Location
             </motion.a>
           )}
-        </div>
+        </motion.div>
 
         <motion.div
           initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 2.5, duration: 1 }}
+          animate={envelopeOpen ? { opacity: 1 } : {}}
+          transition={{ delay: 3, duration: 1 }}
           className="absolute bottom-10"
         >
           <div className="flex flex-col items-center gap-2">
@@ -271,9 +502,6 @@ export default function WeddingTemplate({ order, theme }: { order: Order; theme:
         </motion.div>
       </motion.section>
 
-      {/* ═══════════════════════════════════════
-          2. COUNTDOWN — Animated timer
-      ═══════════════════════════════════════ */}
       <section className={`py-24 md:py-32 px-6 ${theme.bgSecondary}`}>
         <div className="max-w-lg mx-auto text-center">
           <FadeSection>
@@ -294,12 +522,10 @@ export default function WeddingTemplate({ order, theme }: { order: Order; theme:
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════
-          3. OUR STORY — Elegant text reveal
-      ═══════════════════════════════════════ */}
       {content.ourStory && (
-        <ParallaxSection className={`py-24 md:py-32 px-6 ${theme.bg}`} speed={0.1}>
-          <div className="max-w-lg mx-auto">
+        <section className={`py-24 md:py-32 px-6 ${theme.bg} relative`}>
+          <Particles color={theme.particleColor} count={8} />
+          <div className="max-w-lg mx-auto relative z-10">
             <SectionHeading title="Our Story" subtitle="A Love Letter" theme={theme} />
             <FadeSection delay={0.15}>
               <div className={`${theme.glass} rounded-3xl p-8 md:p-12`}>
@@ -310,12 +536,9 @@ export default function WeddingTemplate({ order, theme }: { order: Order; theme:
               </div>
             </FadeSection>
           </div>
-        </ParallaxSection>
+        </section>
       )}
 
-      {/* ═══════════════════════════════════════
-          4. VENUE — Map & details
-      ═══════════════════════════════════════ */}
       <section className={`py-24 md:py-32 px-6 ${theme.bgSecondary}`}>
         <div className="max-w-lg mx-auto">
           <SectionHeading title={details.venue || "The Venue"} subtitle="Celebrate With Us" theme={theme} />
@@ -355,11 +578,8 @@ export default function WeddingTemplate({ order, theme }: { order: Order; theme:
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════
-          5. TIMELINE — Staggered event cards
-      ═══════════════════════════════════════ */}
       {details.agenda && details.agenda.length > 0 && (
-        <ParallaxSection className={`py-24 md:py-32 px-6 ${theme.bg}`} speed={0.08}>
+        <section className={`py-24 md:py-32 px-6 ${theme.bg}`}>
           <div className="max-w-lg mx-auto">
             <SectionHeading title="The Day" subtitle="Schedule" theme={theme} />
             {content.agendaIntro && (
@@ -387,12 +607,9 @@ export default function WeddingTemplate({ order, theme }: { order: Order; theme:
               </StaggerChildren>
             </div>
           </div>
-        </ParallaxSection>
+        </section>
       )}
 
-      {/* ═══════════════════════════════════════
-          6. DETAILS — Info cards grid
-      ═══════════════════════════════════════ */}
       {(details.dressCode || details.transportation || details.accommodation || details.registryLinks) && (
         <section className={`py-24 md:py-32 px-6 ${theme.bgSecondary}`}>
           <div className="max-w-lg mx-auto">
@@ -428,11 +645,9 @@ export default function WeddingTemplate({ order, theme }: { order: Order; theme:
         </section>
       )}
 
-      {/* ═══════════════════════════════════════
-          7. GALLERY — Animated grid
-      ═══════════════════════════════════════ */}
-      <ParallaxSection className={`py-24 md:py-32 px-6 ${theme.bg}`} speed={0.06}>
-        <div className="max-w-lg mx-auto">
+      <section className={`py-24 md:py-32 px-6 ${theme.bg} relative`}>
+        <Particles color={theme.particleColor} count={6} />
+        <div className="max-w-lg mx-auto relative z-10">
           <SectionHeading title="Gallery" subtitle="Captured Moments" theme={theme} />
           <StaggerChildren className="grid grid-cols-2 gap-3">
             {[1, 2, 3, 4].map((i) => (
@@ -453,11 +668,8 @@ export default function WeddingTemplate({ order, theme }: { order: Order; theme:
             </p>
           </FadeSection>
         </div>
-      </ParallaxSection>
+      </section>
 
-      {/* ═══════════════════════════════════════
-          8. RSVP — Interactive form
-      ═══════════════════════════════════════ */}
       <section className={`py-24 md:py-32 px-6 ${theme.bgSecondary}`}>
         <div className="max-w-lg mx-auto text-center">
           <FadeSection>
@@ -527,9 +739,6 @@ export default function WeddingTemplate({ order, theme }: { order: Order; theme:
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════
-          9. CLOSING — Emotional farewell
-      ═══════════════════════════════════════ */}
       <section className={`py-28 md:py-40 px-6 ${theme.bg} text-center relative overflow-hidden`}>
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <motion.div

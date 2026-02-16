@@ -2,11 +2,10 @@ import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, Download, ExternalLink, Share2, QrCode, ArrowLeft, Eye } from "lucide-react";
+import { Heart, Download, ExternalLink, Share2, ArrowLeft, Eye, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import WeddingTemplate from "@/components/wedding-template";
 import { themes, type TemplateName } from "@/lib/themes";
-import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { Order } from "@shared/schema";
 
@@ -14,7 +13,6 @@ export default function PreviewPage() {
   const [, setLocation] = useLocation();
   const orderId = localStorage.getItem("orderId");
   const [showControls, setShowControls] = useState(true);
-  const [showQR, setShowQR] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -78,7 +76,7 @@ export default function PreviewPage() {
             initial={{ y: -100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -100, opacity: 0 }}
-            className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-[#e8dcc8]/50"
+            className="fixed top-0 left-0 right-0 z-[60] bg-white/80 backdrop-blur-xl border-b border-[#e8dcc8]/50"
           >
             <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between gap-3 flex-wrap">
               <div className="flex items-center gap-3">
@@ -91,6 +89,9 @@ export default function PreviewPage() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
+                <Button data-testid="button-change-template" onClick={() => setLocation("/dashboard")} variant="outline" className="gap-2 font-body text-xs">
+                  <Home className="w-3.5 h-3.5" /> Change Style
+                </Button>
                 <Button data-testid="button-share" onClick={handleShare} variant="outline" className="gap-2 font-body text-xs">
                   <Share2 className="w-3.5 h-3.5" /> Share
                 </Button>
@@ -108,7 +109,7 @@ export default function PreviewPage() {
 
       <button
         onClick={() => setShowControls(!showControls)}
-        className="fixed bottom-4 right-4 z-50 w-10 h-10 rounded-full bg-[#2a2520] text-white flex items-center justify-center shadow-lg"
+        className="fixed bottom-4 right-4 z-[60] w-10 h-10 rounded-full bg-[#2a2520] text-white flex items-center justify-center shadow-lg"
         data-testid="button-toggle-controls"
       >
         <Eye className="w-4 h-4" />

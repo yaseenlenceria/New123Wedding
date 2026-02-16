@@ -1,0 +1,159 @@
+Create a premium cinematic wedding invitation web experience builder.
+
+This is NOT a simple template.
+This must feel like a luxury wedding film in web format.
+
+The user is a bride or groom with zero design skills.
+Everything must feel magical, smooth and effortless.
+
+Do not restrict creativity.
+Unlock full animation and storytelling potential.
+
+CORE EXPERIENCE FLOW
+
+Opening Scene – Luxury Envelope Animation
+
+• Show a textured paper envelope centered on screen.
+• Add a realistic wax seal with two gold rings embossed.
+• On tap or scroll, the wax seal gently cracks.
+• Envelope flaps open smoothly with depth and soft shadows.
+• Background music begins softly.
+• A subtle golden light glow appears as it opens.
+
+This should feel emotional, cinematic and slow — not fast or mechanical.
+
+Hero Section – Romantic Reveal
+
+• As envelope opens, wedding photo fades in.
+• Elegant script headline appears with smooth fade + upward motion.
+• Rings appear in background slightly blurred.
+• Rings move slowly in floating parallax motion.
+• Text stays crisp and readable.
+• Soft particles or light dust float subtly.
+
+Make it feel like luxury perfume ad level quality.
+
+Scroll Behaviour – Ring Leads the Story
+
+The ring is a storytelling element.
+
+• As user scrolls, ring gently floats left and right.
+• Ring subtly rotates with scroll direction.
+• Ring moves slightly ahead of content.
+• It acts as a “guide” to the next section.
+• Motion must be elegant, slow, smooth.
+• Never distracting.
+
+Each section transition should feel like a chapter in a love story.
+
+Section Structure (Every Template Must Have)
+
+Each template must include:
+
+• Opening envelope animation
+• Hero with couple photo
+• Countdown section (live animated)
+• Event timeline section
+• Venue with maps
+• Details (dress code, transport, accommodation)
+• Gallery
+• Wedding registry
+• RSVP form
+• Thank you ending screen
+
+Each section must animate into view.
+Nothing should just appear suddenly.
+
+Scroll Experience
+
+• Use cinematic scroll storytelling.
+• Background images move slower than text.
+• Soft fade transitions.
+• Gentle zoom on images.
+• Ring continues subtle parallax.
+• Section titles animate letter by letter.
+
+Make it feel like Apple product page level smoothness.
+
+RSVP Interaction
+
+• RSVP button should glow softly.
+• When clicked, form slides up elegantly.
+• Form fields animate one by one.
+• Submission gives soft success animation.
+• Confetti animation optional but subtle.
+
+Music Player
+
+• Floating minimal music control.
+• Auto-play disabled by default.
+• When pressed, rings subtly pulse to music rhythm.
+
+Language Switch
+
+• Language toggle with small elegant flag icons.
+• Text transitions smoothly when language changes.
+
+Template Builder Dashboard
+
+Create a very simple, beautiful dashboard for users.
+
+User flow:
+
+• Choose template style
+• Upload photos
+• Enter names, date, venue
+• Add timeline
+• Add registry link
+• Add music link
+• Customize colors
+• Customize fonts
+• Preview live instantly
+
+The dashboard must feel modern, clean, minimal.
+No clutter.
+No technical complexity.
+
+Animation Quality Requirements
+
+• All animations must feel premium.
+• No cheap bounce effects.
+• No harsh transitions.
+• Everything smooth and slow.
+• Use easing that feels romantic and luxurious.
+• Focus on emotion.
+
+Visual Direction
+
+Templates should include:
+
+• Sage green luxury
+• Champagne gold elegance
+• Ivory and cream minimal
+• Black and gold royal
+• Dusty rose romantic
+
+Every template must keep the same core structure but different style.
+
+Mobile First
+
+This must feel incredible on mobile.
+All animations optimized for vertical scroll.
+Envelope animation must work perfectly on phone.
+
+Now let me explain how the ring effect you described works in simple terms:
+
+The reason it looks so beautiful is because:
+
+• Ring is on its own animation layer.
+• It has slow floating movement.
+• It responds slightly to scroll position.
+• It moves slower than text.
+• It uses blur + depth effect.
+• It has subtle rotation.
+
+That combination makes it feel alive.
+
+You want cinematic scroll storytelling.
+
+That’s what makes it viral.

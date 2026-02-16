@@ -2,13 +2,13 @@ import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, Sparkles, ArrowRight, ArrowLeft, Plus, Trash2, MapPin, Clock, Calendar, Shirt, Bus, Hotel, Gift, Music, CheckCircle2 } from "lucide-react";
+import { Heart, Sparkles, ArrowRight, ArrowLeft, Plus, Trash2, MapPin, Clock, Calendar, Shirt, Bus, Hotel, Gift, Music, CheckCircle2, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { themes, type TemplateName } from "@/lib/themes";
+import { themes, type TemplateName, type ThemeConfig } from "@/lib/themes";
 import type { Order } from "@shared/schema";
 
 const steps = [
@@ -47,12 +47,6 @@ export default function DashboardPage() {
     onError: () => toast({ title: "Generation failed", description: "Please try again.", variant: "destructive" }),
   });
 
-  useEffect(() => {
-    if (order && order.status === "completed" && order.generatedContent) {
-      setLocation("/preview");
-    }
-  }, [order, setLocation]);
-
   if (isLoading || !order) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#faf8f4]">
@@ -61,10 +55,6 @@ export default function DashboardPage() {
         </motion.div>
       </div>
     );
-  }
-
-  if (order.status === "completed" && order.generatedContent) {
-    return null;
   }
 
   return (
@@ -89,7 +79,20 @@ export default function DashboardPage() {
             </div>
           ))}
         </div>
-        <p className="text-center text-sm text-[#8a7a68] font-body mb-8">{steps[step].label}</p>
+        <p className="text-center text-sm text-[#8a7a68] font-body mb-2">{steps[step].label}</p>
+
+        {order.generatedContent && (
+          <div className="text-center mb-6">
+            <Button
+              data-testid="button-view-preview"
+              onClick={() => setLocation("/preview")}
+              variant="outline"
+              className="gap-2 font-body text-xs border-[#c9a94e]/30 text-[#8a7030]"
+            >
+              <Eye className="w-3.5 h-3.5" /> View Your Wedding Site
+            </Button>
+          </div>
+        )}
 
         <AnimatePresence mode="wait">
           {step === 0 && (
