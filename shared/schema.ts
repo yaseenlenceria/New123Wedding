@@ -48,7 +48,6 @@ export const orders = pgTable("orders", {
 export const insertOrderSchema = createInsertSchema(orders).omit({ 
   id: true, 
   createdAt: true,
-  status: true 
 });
 
 export const weddingDetailsSchema = z.object({

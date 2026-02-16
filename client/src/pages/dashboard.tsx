@@ -20,13 +20,24 @@ const steps = [
 
 export default function DashboardPage() {
   const [, setLocation] = useLocation();
-  const orderId = localStorage.getItem("orderId");
+  const [orderId, setOrderId] = useState(localStorage.getItem("orderId"));
   const [step, setStep] = useState(0);
+  const [creating, setCreating] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
-    if (!orderId) setLocation("/");
-  }, [orderId, setLocation]);
+    if (!orderId && !creating) {
+      setCreating(true);
+      apiRequest("POST", "/api/orders", {})
+        .then((res) => res.json())
+        .then((order) => {
+          localStorage.setItem("orderId", String(order.id));
+          setOrderId(String(order.id));
+        })
+        .catch(() => toast({ title: "Something went wrong", description: "Please refresh the page.", variant: "destructive" }))
+        .finally(() => setCreating(false));
+    }
+  }, [orderId]);
 
   const { data: order, isLoading } = useQuery<Order>({
     queryKey: ["/api/orders", orderId],

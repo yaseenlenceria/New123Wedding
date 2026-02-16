@@ -27,6 +27,21 @@ export async function registerRoutes(
     }
   });
 
+  app.post("/api/orders", async (req, res) => {
+    try {
+      const { nanoid } = await import("nanoid");
+      const id = nanoid(8);
+      const order = await storage.createOrder({
+        etsyOrderId: `ORDER-${id}`,
+        accessCode: `CODE-${id}`,
+        status: "pending",
+      });
+      res.json(order);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to create order" });
+    }
+  });
+
   app.get(api.orders.get.path, async (req, res) => {
     const id = parseInt(req.params.id);
     const order = await storage.getOrder(id);

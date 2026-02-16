@@ -16,7 +16,7 @@ export default function PreviewPage() {
   const { toast } = useToast();
 
   useEffect(() => {
-    if (!orderId) setLocation("/");
+    if (!orderId) setLocation("/dashboard");
   }, [orderId, setLocation]);
 
   const { data: order, isLoading } = useQuery<Order>({
